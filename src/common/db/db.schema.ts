@@ -13,7 +13,9 @@ export const users = pgTable("users", {
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  user_id: uuid("user_id").notNull(),
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
@@ -21,14 +23,20 @@ export const files = pgTable("files", {
 export const organizations = pgTable("organizations", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  owner_id: uuid("owner_id").notNull(),
+  owner_id: uuid("owner_id")
+    .notNull()
+    .references(() => users.id),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const userOrganizations = pgTable("user_organizations", {
-  user_id: uuid("user_id").notNull(),
-  organization_id: uuid("organization_id").notNull(),
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  organization_id: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
