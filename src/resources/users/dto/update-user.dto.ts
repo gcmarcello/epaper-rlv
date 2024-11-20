@@ -1,4 +1,6 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateUserDto } from "./create-user.dto";
+import { z } from "zod";
+import { createUserDto } from "./create-user.dto";
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export const updateUserDto = createUserDto.merge(z.object({ id: z.string().uuid() }));
+
+export type UpdateUserDto = z.infer<typeof createUserDto>;

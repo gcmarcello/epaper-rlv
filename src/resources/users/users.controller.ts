@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { tsRestHandler, TsRestHandler } from "@ts-rest/nest";
+import { userContract as c } from "./users.contract";
+import { Controller } from "@nestjs/common";
 
-@Controller("users")
+@Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @TsRestHandler(c.createUser)
+  create() {
+    return tsRestHandler(c.createUser, async ({ body }) => {
+      const post = await this.usersService.create(body);
+
+      if (!post) {
+        return { status: 404, body: null };
+      }
+
+      return { status: 200, body: post };
+    });
   }
 
-  @Get()
+  @TsRestHandler(c.findUsers)
   findAll() {
-    return this.usersService.findAll();
+    return tsRestHandler(c.findUsers, async ({ query }) => {
+      const post = await this.usersService.findAll(query);
+
+      return { status: 200, body: post };
+    });
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(+id);
-  }
+  @TsRestHandler(c.findUser)
+  findbyId() {
+    return tsRestHandler(c.findUser, async ({ params }) => {
+      const post = await this.usersService.findbyId(params.id);
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(+id);
+      return { status: 200, body: post };
+    });
   }
 }
