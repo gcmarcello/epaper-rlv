@@ -1,5 +1,13 @@
 import { Request } from "express";
 
+export type UserPayload = {
+  id: string;
+  name: string;
+  organizationId?: string;
+  iat?: number;
+  exp?: number;
+};
+
 export type AuthenticatedRequest = Request & {
-  user: { id: string; name: string; iat: number; exp: number };
+  user: UserPayload;
 };
