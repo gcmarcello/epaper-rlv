@@ -1,23 +1,29 @@
-import { text, pgTable, uuid } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { text, pgTable, uuid, timestamp } from "drizzle-orm/pg-core";
+import { InferSelectModel, relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   password: text("password"),
   email: text("email").unique(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   user_id: uuid("user_id"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const organizations = pgTable("organizations", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   owner_id: uuid("owner_id"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const userOrganizations = pgTable("user_organizations", {
@@ -54,3 +60,7 @@ export const userOrganizationsRelations = relations(userOrganizations, ({ one })
     references: [organizations.id],
   }),
 }));
+
+export type User = InferSelectModel<typeof users>;
+export type File = InferSelectModel<typeof files>;
+export type Organization = InferSelectModel<typeof organizations>;
