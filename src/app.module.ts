@@ -6,9 +6,17 @@ import { DBModule } from "./common/db/db.module";
 import { ConfigModule } from "@nestjs/config";
 import { UsersModule } from "./resources/users/users.module";
 import { OrganizationsModule } from "./resources/organizations/organizations.module";
+import { AuthModule } from "./resources/auth/auth.module";
 
 @Module({
-  imports: [ConfigModule.forRoot(), DBModule, FilesModule, UsersModule, OrganizationsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    DBModule,
+    FilesModule,
+    UsersModule,
+    OrganizationsModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

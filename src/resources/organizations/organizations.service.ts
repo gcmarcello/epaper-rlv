@@ -1,26 +1,52 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
-import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { TsRestException } from "@ts-rest/nest";
+import { eq } from "drizzle-orm";
+import * as schema from "src/common/db/db.schema";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { QueryDto } from "src/common/db/db.dto";
+import { DrizzleAsyncProvider } from "src/common/db/db.provider";
+import { organizationContract } from "./organizations.contract";
 
 @Injectable()
 export class OrganizationsService {
-  create(createOrganizationDto: CreateOrganizationDto) {
-    return "This action adds a new organization";
+  constructor(
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema>
+  ) {}
+
+  async create(createOrganizationDto: CreateOrganizationDto, owner_id: string) {
+    return await this.db
+      .insert(schema.organizations)
+      .values({ ...createOrganizationDto, owner_id })
+      .returning();
   }
 
-  findAll() {
-    return `This action returns all organizations`;
+  async findAll(queryDto?: QueryDto) {
+    const organizations = await this.db.query.organizations.findMany({
+      ...queryDto,
+    });
+
+    if (!organizations.length)
+      throw new TsRestException(organizationContract.findOrgs, {
+        status: 404,
+        body: { message: "No Orgs Found" },
+      });
+
+    return { organizations, total: organizations.length };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} organization`;
-  }
+  async findbyId(id: string) {
+    const organization = await this.db.query.organizations.findFirst({
+      where: eq(schema.organizations.id, id),
+    });
 
-  update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-    return `This action updates a #${id} organization`;
-  }
+    if (!organization)
+      throw new TsRestException(organizationContract.findOrg, {
+        status: 404,
+        body: { message: "No User Found" },
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} organization`;
+    return organization;
   }
 }

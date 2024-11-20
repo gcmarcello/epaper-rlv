@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
-import { CreateOrganizationDto } from "./dto/create-organization.dto";
-import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { TsRestHandler, tsRestHandler } from "@ts-rest/nest";
+import { organizationContract as c } from "./organizations.contract";
 
-@Controller("organizations")
+@Controller()
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  @Post()
-  create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationsService.create(createOrganizationDto);
+  @TsRestHandler(c.createOrg)
+  create() {
+    return tsRestHandler(c.createOrg, async ({ body }) => {
+      const post = await this.organizationsService.create(body, "s");
+
+      if (!post) {
+        return { status: 404, body: null };
+      }
+
+      return { status: 200, body: post };
+    });
   }
 
-  @Get()
+  @TsRestHandler(c.findOrgs)
   findAll() {
-    return this.organizationsService.findAll();
+    return tsRestHandler(c.findOrgs, async ({ query }) => {
+      const post = await this.organizationsService.findAll(query);
+
+      return { status: 200, body: post };
+    });
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.organizationsService.findOne(+id);
-  }
+  @TsRestHandler(c.findOrg)
+  findbyId() {
+    return tsRestHandler(c.findOrg, async ({ params }) => {
+      const post = await this.organizationsService.findbyId(params.id);
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateOrganizationDto: UpdateOrganizationDto) {
-    return this.organizationsService.update(+id, updateOrganizationDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.organizationsService.remove(+id);
+      return { status: 200, body: post };
+    });
   }
 }
