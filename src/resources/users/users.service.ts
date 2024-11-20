@@ -47,14 +47,14 @@ export class UsersService {
     return { users, total: users.length };
   }
 
-  async findbyId(id?: string) {
+  async findbyId(id: string) {
     const user = await this.db.query.users.findFirst({
       where: eq(schema.users.id, id),
       columns: { email: true, id: true, name: true, created_at: true, updated_at: true },
     });
 
     if (!user)
-      throw new TsRestException(userContract.findUsers, {
+      throw new TsRestException(userContract.findUser, {
         status: 404,
         body: { message: "No User Found" },
       });
