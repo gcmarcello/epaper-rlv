@@ -1,7 +1,8 @@
 import { UsersService } from "./users.service";
 import { tsRestHandler, TsRestHandler } from "@ts-rest/nest";
 import { userContract as c } from "./users.contract";
-import { Controller } from "@nestjs/common";
+import { Controller, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "../auth/auth.guard";
 
 @Controller()
 export class UsersController {
@@ -20,6 +21,7 @@ export class UsersController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @TsRestHandler(c.findUsers)
   findAll() {
     return tsRestHandler(c.findUsers, async ({ query }) => {
@@ -29,6 +31,7 @@ export class UsersController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @TsRestHandler(c.findUser)
   findbyId() {
     return tsRestHandler(c.findUser, async ({ params }) => {
