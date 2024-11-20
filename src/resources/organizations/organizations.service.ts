@@ -16,10 +16,20 @@ export class OrganizationsService {
   ) {}
 
   async create(createOrganizationDto: CreateOrganizationDto, owner_id: string) {
-    return await this.db
-      .insert(schema.organizations)
-      .values({ ...createOrganizationDto, owner_id })
-      .returning();
+    const org = await this.db.transaction(async (trx) => {
+      const newOrg = await trx
+        .insert(schema.organizations)
+        .values({ ...createOrganizationDto, owner_id })
+        .returning();
+
+      await trx.insert(schema.userOrganizations).values({
+        user_id: owner_id,
+        organization_id: newOrg[0].id,
+      });
+      return newOrg[0];
+    });
+
+    return org;
   }
 
   async findAll(queryDto?: QueryDto) {
