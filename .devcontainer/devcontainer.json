@@ -40,6 +40,14 @@
         "material-icon-theme.folders.associations": {
           "_shared": "shared"
         },
+        "material-icon-theme.files.customClones": [
+          {
+            "name": "nest-action",
+            "base": "nest",
+            "color": "pink-300",
+            "fileExtensions": ["contract.ts"]
+          }
+        ],
         "editor.formatOnSave": true,
         "editor.formatOnPaste": false,
         "material-icon-theme.activeIconPack": "nest",
