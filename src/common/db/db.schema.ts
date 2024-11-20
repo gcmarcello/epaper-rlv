@@ -1,74 +1,20 @@
-import { text, pgTable, uuid, timestamp } from "drizzle-orm/pg-core";
-import { InferSelectModel, relations } from "drizzle-orm";
+import {
+  organizations,
+  organizationsRelations,
+  userOrganizations,
+  userOrganizationsRelations,
+} from "../../resources/organizations/entities/organizations.entity";
 
-export const users = pgTable("users", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  password: text("password").notNull(),
-  email: text("email").unique().notNull(),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
-});
+import { files } from "../../resources/files/entities/file.entity";
 
-export const files = pgTable("files", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  user_id: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
-});
+import { users, usersRelations } from "../../resources/users/entities/user.entity";
 
-export const organizations = pgTable("organizations", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
-  owner_id: uuid("owner_id")
-    .notNull()
-    .references(() => users.id),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
-});
-
-export const userOrganizations = pgTable("user_organizations", {
-  user_id: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  organization_id: uuid("organization_id")
-    .notNull()
-    .references(() => organizations.id),
-});
-
-export const usersRelations = relations(users, ({ many }) => ({
-  files: many(files, {
-    relationName: "user_id",
-  }),
-  organizations: many(userOrganizations, {
-    relationName: "user_id",
-  }),
-}));
-
-export const organizationsRelations = relations(organizations, ({ many, one }) => ({
-  users: many(userOrganizations, {
-    relationName: "organization_id",
-  }),
-  owner: one(users, {
-    fields: [organizations.owner_id],
-    references: [users.id],
-  }),
-}));
-
-export const userOrganizationsRelations = relations(userOrganizations, ({ one }) => ({
-  user: one(users, {
-    fields: [userOrganizations.user_id],
-    references: [users.id],
-  }),
-  organization: one(organizations, {
-    fields: [userOrganizations.organization_id],
-    references: [organizations.id],
-  }),
-}));
-
-export type User = InferSelectModel<typeof users>;
-export type File = InferSelectModel<typeof files>;
-export type Organization = InferSelectModel<typeof organizations>;
+export {
+  users,
+  files,
+  organizations,
+  userOrganizations,
+  usersRelations,
+  organizationsRelations,
+  userOrganizationsRelations,
+};
