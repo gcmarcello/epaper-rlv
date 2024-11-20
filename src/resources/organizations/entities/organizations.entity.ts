@@ -7,7 +7,7 @@ export const organizations = pgTable("organizations", {
   name: text("name").notNull(),
   owner_id: uuid("owner_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
@@ -15,11 +15,11 @@ export const organizations = pgTable("organizations", {
 export const userOrganizations = pgTable(
   "user_organizations",
   {
-  user_id: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
-  organization_id: uuid("organization_id")
-    .notNull()
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    organization_id: uuid("organization_id")
+      .notNull()
       .references(() => organizations.id, { onDelete: "cascade" }),
   },
   (table) => {
