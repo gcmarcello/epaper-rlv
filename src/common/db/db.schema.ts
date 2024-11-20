@@ -3,25 +3,25 @@ import { InferSelectModel, relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
-  password: text("password"),
-  email: text("email").unique(),
+  name: text("name").notNull(),
+  password: text("password").notNull(),
+  email: text("email").unique().notNull(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
-  user_id: uuid("user_id"),
+  name: text("name").notNull(),
+  user_id: uuid("user_id").notNull(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const organizations = pgTable("organizations", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name"),
-  owner_id: uuid("owner_id"),
+  name: text("name").notNull(),
+  owner_id: uuid("owner_id").notNull(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
