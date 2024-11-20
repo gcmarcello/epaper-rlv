@@ -12,14 +12,22 @@ export const organizations = pgTable("organizations", {
   updated_at: timestamp("updated_at").defaultNow(),
 });
 
-export const userOrganizations = pgTable("user_organizations", {
+export const userOrganizations = pgTable(
+  "user_organizations",
+  {
   user_id: uuid("user_id")
     .notNull()
     .references(() => users.id),
   organization_id: uuid("organization_id")
     .notNull()
-    .references(() => organizations.id),
-});
+      .references(() => organizations.id, { onDelete: "cascade" }),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.organization_id, table.user_id] }),
+    };
+  }
+);
 
 export const organizationsRelations = relations(organizations, ({ many, one }) => ({
   users: many(userOrganizations, {
