@@ -3,7 +3,7 @@ import { OrganizationsService } from "./organizations.service";
 import { TsRestHandler, tsRestHandler } from "@ts-rest/nest";
 import { organizationContract as c } from "./organizations.contract";
 import { AuthGuard } from "../auth/auth.guard";
-import { AuthenticatedRequest } from "src/types/authenticatedRequest";
+import { AuthenticatedRequest } from "@/types/authenticatedRequest";
 
 @Controller()
 export class OrganizationsController {
@@ -13,13 +13,13 @@ export class OrganizationsController {
   @TsRestHandler(c.createOrg)
   create(@Req() req: AuthenticatedRequest) {
     return tsRestHandler(c.createOrg, async (data) => {
-      const post = await this.organizationsService.create(data.body, req.user.id);
+      const org = await this.organizationsService.create(data.body, req.user.id);
 
-      if (!post) {
+      if (!org) {
         return { status: 400, body: null };
       }
 
-      return { status: 200, body: post };
+      return { status: 200, body: org };
     });
   }
 
