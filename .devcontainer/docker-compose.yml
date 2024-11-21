@@ -1,5 +1,36 @@
 services:
+  minio:
+    image: minio/minio:latest
+    command: server --address :9000 --console-address :9001 /data
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 1212:1212
+    command: -p 1212
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
   app:
+    depends_on:
+      - minio
+      - db
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,30 +51,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  db:
-    image: postgres:latest
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - 1212:1212
-    command: -p 1212
-    extra_hosts:
-      - host.docker.internal:host-gateway
-
-  minio:
-    image: minio/minio
-    environment:
-      MINIO_ACCESS_KEY: minio_access_key
-      MINIO_SECRET_KEY: minio_secret_key
-    ports:
-      - 9000:9000
-    command: server /data
-    extra_hosts:
-      - host.docker.internal:host-gateway
-
 volumes:
   postgres-data:
+  minio_data:
