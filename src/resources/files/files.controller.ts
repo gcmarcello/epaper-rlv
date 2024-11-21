@@ -25,7 +25,7 @@ export class FilesController {
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addMaxSizeValidator({
-          maxSize: 10000,
+          maxSize: 1000000,
         })
         .build()
     )
