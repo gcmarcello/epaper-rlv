@@ -2,10 +2,10 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { TsRestException } from "@ts-rest/nest";
 import { eq } from "drizzle-orm";
-import * as schema from "src/common/db/db.schema";
+import * as schema from "@/common/db/db.schema";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { QueryDto } from "src/common/db/db.dto";
-import { DrizzleAsyncProvider } from "src/common/db/db.provider";
+import { QueryDto } from "@/common/db/db.dto";
+import { DrizzleAsyncProvider } from "@/common/db/db.provider";
 import { organizationContract } from "./organizations.contract";
 
 @Injectable()

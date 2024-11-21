@@ -1,5 +1,5 @@
 import { initContract } from "@ts-rest/core";
-import { queryDto } from "src/common/db/db.dto";
+import { queryDto } from "@/common/db/db.dto";
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { createOrganizationDto } from "./dto/create-organization.dto";
