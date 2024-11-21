@@ -46,4 +46,13 @@ export class FilesController {
       return { status: 200, body: { url } };
     });
   }
+
+  @UseGuards(AuthGuard)
+  @TsRestHandler(c.getFiles)
+  getFiles(@Req() request: AuthenticatedRequest) {
+    return tsRestHandler(c.getFiles, async ({ query }) => {
+      const data = await this.filesService.find(query, request.user.organizationId);
+      return { status: 200, body: data };
+    });
+  }
 }
