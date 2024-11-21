@@ -1,7 +1,7 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { files } from "src/resources/files/entities/file.entity";
-import { userOrganizations } from "src/resources/organizations/entities/organizations.entity";
+import { files } from "@/resources/files/entities/file.entity";
+import { userOrganizations } from "@/resources/organizations/entities/organizations.entity";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),

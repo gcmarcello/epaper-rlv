@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
-import { DBModule } from "src/common/db/db.module";
+import { DBModule } from "@/common/db/db.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 

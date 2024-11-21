@@ -1,11 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { DrizzleAsyncProvider } from "src/common/db/db.provider";
+import { DrizzleAsyncProvider } from "@/common/db/db.provider";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import * as schema from "src/common/db/db.schema";
-import { hash } from "src/utils/bcrypt";
+import * as schema from "../../common/db/db.schema";
+import { hash } from "@/utils/bcrypt";
 import { eq } from "drizzle-orm";
-import { QueryDto } from "src/common/db/db.dto";
+import { QueryDto } from "@/common/db/db.dto";
 import { TsRestException } from "@ts-rest/nest";
 import { userContract } from "./users.contract";
 

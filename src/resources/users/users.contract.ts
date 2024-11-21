@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { createUserDto } from "./dto/create-user.dto";
-import { queryDto } from "src/common/db/db.dto";
+import { queryDto } from "@/common/db/db.dto";
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { User } from "./entities/user.entity";
