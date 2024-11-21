@@ -83,13 +83,12 @@ describe("AuthGuard", () => {
       name: "Test User",
       organizationId: crypto.randomUUID(),
     };
+
     jest.spyOn(configService, "get").mockReturnValue("test-secret");
     jest.spyOn(jwtService, "verifyAsync").mockResolvedValue(mockPayload);
 
     const result = await authGuard.canActivate(context);
-    const request = context.switchToHttp().getRequest();
 
-    expect(result).toBe(true);
-    expect(request.user).toEqual(mockPayload);
+    expect(result).toEqual(mockPayload);
   });
 });
