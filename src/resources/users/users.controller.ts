@@ -13,10 +13,6 @@ export class UsersController {
     return tsRestHandler(c.createUser, async ({ body }) => {
       const post = await this.usersService.create(body);
 
-      if (!post) {
-        return { status: 404, body: null };
-      }
-
       return { status: 200, body: post };
     });
   }
