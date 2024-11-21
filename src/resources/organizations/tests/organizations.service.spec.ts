@@ -29,7 +29,8 @@ describe("OrganizationsService", () => {
       ],
     }).compile();
 
-    service = new OrganizationsService(db);
+    service = module.get<OrganizationsService>(OrganizationsService);
+    db = module.get<NodePgDatabase<typeof schema>>(DrizzleAsyncProvider);
   });
 
   it("should be defined", () => {
