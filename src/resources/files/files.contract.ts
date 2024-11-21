@@ -1,6 +1,8 @@
 import { initContract } from "@ts-rest/core";
 import { createFileDto } from "./dto/create-file.dto";
 import { z } from "zod";
+import { findFileDto } from "./dto/find-file.dto";
+import { File } from "./entities/file.entity";
 
 const c = initContract();
 
@@ -25,6 +27,17 @@ export const fileContract = c.router({
     }),
     responses: {
       200: c.type<{ url: string }>(),
+    },
+  },
+  getFiles: {
+    method: "GET",
+    path: "/files",
+    query: findFileDto,
+    responses: {
+      200: c.type<{
+        files: (File & { user: { name: string } | null })[];
+        count: number;
+      }>(),
     },
   },
 });
