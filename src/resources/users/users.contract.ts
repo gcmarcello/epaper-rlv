@@ -15,7 +15,7 @@ export const userContract = c.router({
     path: "/users",
     summary: "Create user",
     responses: {
-      201: c.type<{ message: string }>(),
+      201: c.type<{ user: { name: string; id: string } }>(),
     },
     body: createUserDto,
   },

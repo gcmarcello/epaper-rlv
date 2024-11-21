@@ -26,10 +26,13 @@ export class UsersService {
         body: { message: "Email already exists" },
       });
     }
-    await this.db
-      .insert(schema.users)
-      .values({ ...createUserDto, password: await hash(createUserDto.password) });
-    return { message: "User created" };
+    const { name, id } = (
+      await this.db
+        .insert(schema.users)
+        .values({ ...createUserDto, password: await hash(createUserDto.password) })
+        .returning()
+    )[0];
+    return { user: { name, id } };
   }
 
   async findAll(queryDto?: QueryDto) {
