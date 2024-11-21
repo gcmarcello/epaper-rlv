@@ -13,7 +13,6 @@ export class AuthController {
   login() {
     return tsRestHandler(c.login, async ({ body }) => {
       const post = await this.authService.login(body);
-
       return { status: 200, body: post };
     });
   }
