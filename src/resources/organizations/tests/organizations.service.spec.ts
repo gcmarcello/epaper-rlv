@@ -2,7 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { OrganizationsService } from "../organizations.service";
 import { DrizzleAsyncProvider } from "@/common/db/db.provider";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { Organization } from "../entities/organizations.entity";
+import { CreateOrganizationDto } from "../dto/create-organization.dto";
+import { QueryDto } from "@/common/db/db.dto";
 import { TsRestException } from "@ts-rest/nest";
 import * as schema from "@/common/db/db.schema";
 
@@ -17,7 +18,7 @@ describe("OrganizationsService", () => {
         {
           provide: DrizzleAsyncProvider,
           useValue: {
-      transaction: jest.fn(),
+            transaction: jest.fn(),
             query: {
               organizations: {
                 findMany: jest.fn(),
@@ -38,85 +39,64 @@ describe("OrganizationsService", () => {
   });
 
   describe("create", () => {
-    it("should create an organization", async () => {
-      const organizationDto = {
-        name: "Organization",
-      };
-
+    it("should create a new organization", async () => {
+      const createOrganizationDto: CreateOrganizationDto = { name: "Test Org" };
       const owner_id = crypto.randomUUID();
-      const id = crypto.randomUUID();
+      const newOrg = { id: crypto.randomUUID(), ...createOrganizationDto, owner_id };
 
-      const createdOrg: Organization = {
-        id,
-        created_at: new Date(),
-        name: organizationDto.name,
-        updated_at: new Date(),
-        owner_id,
-      };
+      db.transaction = jest.fn().mockImplementation(async (callback) => {
+        return callback({
+          insert: jest.fn().mockReturnValue({
+            values: jest.fn().mockReturnValue({
+              returning: jest.fn().mockResolvedValue([newOrg]),
+            }),
+          }),
+        });
+      });
 
-      jest.spyOn(service, "create").mockResolvedValue(createdOrg);
-
-      const result = await service.create(organizationDto, owner_id);
-
-      expect(result).toEqual(createdOrg);
+      const result = await service.create(createOrganizationDto, owner_id);
+      expect(result).toEqual(newOrg);
     });
   });
+
   describe("findAll", () => {
     it("should return all organizations", async () => {
-      const mockedResponse = {
-        organizations: [
-          {
-            created_at: new Date(),
-            id: "uuid",
-            name: "Org Test",
-            updated_at: new Date(),
-            owner_id: "uuid",
-          },
-        ],
-        total: 1,
+      const queryDto: QueryDto = {
+        limit: 10,
+        offset: 0,
       };
+      const organizations = [{ id: "org-id", name: "Test Org" }];
 
-      jest.spyOn(service, "findAll").mockResolvedValue(mockedResponse);
+      db.query.organizations.findMany = jest.fn().mockResolvedValue(organizations);
 
-      const result = await service.findAll();
+      const result = await service.findAll(queryDto);
+      expect(result).toEqual({ organizations, total: organizations.length });
+    });
 
-      expect(result).toEqual(mockedResponse);
+    it("should throw an exception if no organizations found", async () => {
+      db.query.organizations.findMany = jest.fn().mockResolvedValue([]);
+
+      await expect(service.findAll()).rejects.toThrow(TsRestException);
     });
   });
-  describe("findById", () => {
-    it("should return an organization by id", async () => {
-      const id = crypto.randomUUID();
-      const mockedOrg = {
-        id,
-        created_at: new Date(),
-        name: "Test Org",
-        updated_at: new Date(),
-        owner_id: crypto.randomUUID(),
-      };
 
-      jest.spyOn(service, "findbyId").mockResolvedValue(mockedOrg);
+  describe("findbyId", () => {
+    it("should return an organization by id", async () => {
+      const id = "org-id";
+      const organization = { id, name: "Test Org" };
+
+      db.query.organizations.findFirst = jest.fn().mockResolvedValue(organization);
 
       const result = await service.findbyId(id);
-
-      expect(result).toEqual(mockedOrg);
+      expect(result).toEqual(organization);
     });
 
-    it("should throw exception if organization not found", async () => {
-      const id = crypto.randomUUID();
+    it("should throw an exception if organization not found", async () => {
+      const id = "org-id";
 
-      jest.spyOn(service, "findbyId").mockRejectedValue(
-        new TsRestException(organizationContract.findOrg, {
-          status: 404,
-          body: { message: "No User Found" },
-        })
-      );
+      db.query.organizations.findFirst = jest.fn().mockResolvedValue(null);
 
-      await expect(service.findbyId(id)).rejects.toEqual(
-        new TsRestException(organizationContract.findOrg, {
-          status: 404,
-          body: { message: "No User Found" },
-        })
-      );
+      await expect(service.findbyId(id)).rejects.toThrow(TsRestException);
     });
   });
 });
