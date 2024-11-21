@@ -35,6 +35,7 @@ export const files = pgTable("files", {
     .references(() => organizations.id),
   file_origin: fileOriginEnum(),
   file_type: fileTypeEnum(),
+  file_key: text("file_key").notNull(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
