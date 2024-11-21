@@ -16,7 +16,7 @@ export class OrganizationsController {
       const post = await this.organizationsService.create(data.body, req.user.id);
 
       if (!post) {
-        return { status: 404, body: null };
+        return { status: 400, body: null };
       }
 
       return { status: 200, body: post };
