@@ -36,7 +36,7 @@ export const fileContract = c.router({
     responses: {
       200: c.type<{
         files: (File & { user: { name: string } | null })[];
-        count: number;
+        total: number;
       }>(),
     },
   },

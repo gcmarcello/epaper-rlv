@@ -129,14 +129,14 @@ export class FilesService {
       .limit(limit)
       .offset(offset);
 
-    let count = results.length;
+    let total = results.length;
 
     if (conditions.length === 1)
-      count = await this.db.$count(schema.files, eq(schema.files.organization_id, organization_id));
+      total = await this.db.$count(schema.files, eq(schema.files.organization_id, organization_id));
 
     return {
       files: results.map((file) => ({ ...file.files, user: file.users })),
-      count,
+      total,
     };
   }
 }
