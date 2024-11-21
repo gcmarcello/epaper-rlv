@@ -9,6 +9,7 @@ import { organizationContract } from "../organizations/organizations.contract";
 import { compare } from "@/utils/bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserPayload } from "@/types/authenticatedRequest";
+import { authContract } from "./auth.contract";
 
 @Injectable()
 export class AuthService {
@@ -23,8 +24,8 @@ export class AuthService {
       where: eq(schema.users.email, loginDto.email),
     });
 
-    const error = new TsRestException(organizationContract.findOrgs, {
-      status: 404,
+    const error = new TsRestException(authContract.login, {
+      status: 401,
       body: { message: "Senha ou usuário incorretos." },
     });
 
