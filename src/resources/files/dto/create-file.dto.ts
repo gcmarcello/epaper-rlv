@@ -6,6 +6,8 @@ export const createFileDto = z.object({
   file_origin: z.nativeEnum(FileOrigin),
   file_type: z.nativeEnum(FileType),
   file: z.any(),
+  gross_value: z.string().transform(Number).optional(),
+  net_value: z.string().transform(Number).optional(),
   organization_id: z.string().uuid(),
 });
 

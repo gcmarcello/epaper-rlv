@@ -1,6 +1,14 @@
 import { organizations, users } from "@/common/db/db.schema";
 import { InferSelectModel } from "drizzle-orm";
-import { pgEnum, pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  doublePrecision,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export enum FileOrigin {
   DIGITIZED = "DIGITIZED",
@@ -36,6 +44,8 @@ export const files = pgTable("files", {
   file_origin: fileOriginEnum(),
   file_type: fileTypeEnum(),
   file_key: text("file_key").notNull(),
+  gross_value: doublePrecision("gross_value"),
+  net_value: doublePrecision("net_value"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
