@@ -1,18 +1,33 @@
+import { Test, TestingModule } from "@nestjs/testing";
 import { OrganizationsService } from "../organizations.service";
-import * as schema from "../../../common/db/db.schema";
+import { DrizzleAsyncProvider } from "@/common/db/db.provider";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Organization } from "../entities/organizations.entity";
 import { TsRestException } from "@ts-rest/nest";
-import { organizationContract } from "../organizations.contract";
+import * as schema from "@/common/db/db.schema";
 
 describe("OrganizationsService", () => {
   let service: OrganizationsService;
   let db: NodePgDatabase<typeof schema>;
 
   beforeEach(async () => {
-    db = {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        OrganizationsService,
+        {
+          provide: DrizzleAsyncProvider,
+          useValue: {
       transaction: jest.fn(),
-    } as any;
+            query: {
+              organizations: {
+                findMany: jest.fn(),
+                findFirst: jest.fn(),
+              },
+            },
+          },
+        },
+      ],
+    }).compile();
 
     service = new OrganizationsService(db);
   });
