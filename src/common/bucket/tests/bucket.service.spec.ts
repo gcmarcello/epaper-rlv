@@ -11,7 +11,6 @@ describe("BucketService (Integration)", () => {
   const testFileMimeType = "text/plain";
 
   beforeAll(async () => {
-    // Mock ConfigService to provide MinIO configuration
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BucketService,
@@ -33,12 +32,10 @@ describe("BucketService (Integration)", () => {
 
     bucketService = module.get<BucketService>(BucketService);
 
-    // Ensure the test bucket exists
     await bucketService.createBucketIfNotExists(testBucketName);
   });
 
   afterAll(async () => {
-    // Clean up test bucket
     await bucketService.deleteFile(testBucketName, testFileKey);
     await bucketService.deleteBucket(testBucketName);
   });
