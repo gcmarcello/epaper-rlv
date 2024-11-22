@@ -1,7 +1,4 @@
-# fly.toml app configuration file generated for rlv-minio-staging on 2024-11-22T03:09:19Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# fly.toml app configuration file for rlv-minio-staging
 
 app = "rlv-minio-staging"
 primary_region = "gig"
@@ -24,6 +21,7 @@ primary_region = "gig"
   destination = "/data"
 
 [[services]]
+  # MinIO server port
   internal_port = 9000
   protocol = "tcp"
 
@@ -36,12 +34,25 @@ primary_region = "gig"
     handlers = ["tls", "http"]
 
 [[services]]
+  # MinIO console port
   internal_port = 9001
   protocol = "tcp"
 
   [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
+    port = 9001
+    handlers = ["http"]
 
+[experimental]
+  disable_http2 = true
 
+[[http_service.response_headers]]
+  key = "Cache-Control"
+  value = "no-store"
 
+[[http_service.response_headers]]
+  key = "Content-Security-Policy"
+  value = "default-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';"
+
+[[http_service.response_headers]]
+  key = "Content-Type"
+  value = "text/css"
