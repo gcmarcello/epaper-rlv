@@ -36,6 +36,7 @@ RUN pnpm run build
 
 # Run Drizzle migrations
 RUN npx drizzle-kit up --config=drizzle.config.ts
+RUN npx drizzle-kit migrate --config=drizzle.config.ts
 
 
 # Final stage for app image
