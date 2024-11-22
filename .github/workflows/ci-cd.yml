@@ -1,0 +1,55 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    env:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin1234
+      MINIO_HOST: localhost
+      MINIO_PORT: 9000
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup minio
+        run: |
+          docker run -d -p 9000:9000 --name minio -e "MINIO_ACCESS_KEY=admin" -e "MINIO_SECRET_KEY=admin1234" -v /tmp/data:/data -v /tmp/config:/root/.minio minio/minio server /data
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        env:
+          MINIO_ACCESS_KEY: admin
+          MINIO_SECRET_KEY: admin1234
+        run: npm test
+
+  deploy:
+    name: Deploy to Fly
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
