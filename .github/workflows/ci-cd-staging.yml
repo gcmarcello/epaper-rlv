@@ -46,6 +46,13 @@ jobs:
             -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
             minio/minio server /data --console-address ":9001"
 
+      - name: Wait for MinIO to Start
+        run: |
+          until curl -f http://localhost:9000/minio/health/live; do
+            echo "Waiting for MinIO to be ready..."
+            sleep 5
+          done
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
