@@ -152,4 +152,24 @@ describe("FilesController", () => {
       expect(mockedResult).toEqual({ status: 200, body: { message: "Arquivo Atualizado" } });
     });
   });
+
+  describe("deleteFile", () => {
+    it("should delete a file", async () => {
+      const request = { user: { id: "userId", organizationId: "orgId" } };
+      const params = { id: 1 };
+      const mockedResult = { status: 200, body: { message: "Arquivo Deletado" } };
+
+      jest.spyOn(service, "delete").mockResolvedValue("Arquivo Deletado");
+
+      await service.delete(params.id, request.user.id, request.user.organizationId);
+
+      expect(service.delete).toHaveBeenCalledWith(
+        params.id,
+        request.user.id,
+        request.user.organizationId
+      );
+
+      expect(mockedResult).toEqual({ status: 200, body: { message: "Arquivo Deletado" } });
+    });
+  });
 });
