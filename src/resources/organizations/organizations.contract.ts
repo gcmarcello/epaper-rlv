@@ -23,6 +23,9 @@ export const organizationContract = c.router({
       201: c.type<{ message: string }>(),
     },
     body: createOrganizationDto,
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
   },
   findOrgs: {
     method: "GET",
@@ -33,12 +36,18 @@ export const organizationContract = c.router({
       200: c.type<{ organizations: Organization[]; total: number }>(),
     },
     query: queryDto,
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
   },
   findOrg: {
     method: "GET",
     path: "/organizations/:id",
     description: "Find a organization",
     summary: "Find a organization from ID",
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
     pathParams: z.object({
       id: z.string().uuid().openapi({
         title: "ID da Organizacao",

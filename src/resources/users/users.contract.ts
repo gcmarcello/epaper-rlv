@@ -14,6 +14,9 @@ export const userContract = c.router({
     description: "Create a user",
     path: "/users",
     summary: "Create user",
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
     responses: {
       201: c.type<{ user: { name: string; id: string } }>(),
     },
@@ -24,6 +27,9 @@ export const userContract = c.router({
     description: "Find users",
     path: "/users",
     summary: "Find users",
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
     responses: {
       200: c.type<{ users: Omit<User, "password">[]; total: number }>(),
     },
@@ -34,6 +40,9 @@ export const userContract = c.router({
     path: "/users/:id",
     description: "Find a user",
     summary: "Find a user from ID",
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
     pathParams: z.object({
       id: z.string().uuid().openapi({
         title: "ID do Usuário",

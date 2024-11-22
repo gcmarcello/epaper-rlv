@@ -22,6 +22,9 @@ export const authContract = c.router({
     description: "Update active organization",
     path: "/auth/organization",
     summary: "Update active organization",
+    metadata: {
+      openApiSecurity: [{ BearerAuth: [] }],
+    },
     headers: z.object({
       Authorization: z.string().optional().openapi({
         title: "Bearer Token",
