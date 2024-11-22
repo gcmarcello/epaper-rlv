@@ -7,7 +7,7 @@ app = 'rlv-minio-staging'
 primary_region = 'gig'
 
 [http_service]
-  internal_port = 90
+  internal_port = 9000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
