@@ -13,8 +13,8 @@ jobs:
     name: Run Tests - STAGING
     runs-on: ubuntu-latest
     env:
-      MINIO_ACCESS_KEY: admin
-      MINIO_SECRET_KEY: admin1234
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin1234
       MINIO_HOST: localhost
       MINIO_PORT: 9000
 
