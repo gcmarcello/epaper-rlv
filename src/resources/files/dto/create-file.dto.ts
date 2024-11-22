@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { FileOrigin, FileType } from "../entities/file.entity";
+import { File } from "node-fetch";
 
 export const createFileDto = z.object({
   name: z.string().min(2).max(64),
