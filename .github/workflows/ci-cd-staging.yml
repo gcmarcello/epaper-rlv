@@ -68,7 +68,7 @@ jobs:
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: admin1234
           MINIO_ENDPOINT: http://localhost:9000/
-        run: npm drizzle-kit migrate --config=drizzle.config.ts && npm test
+        run: npm run test:staging
 
   deploy:
     name: Deploy to Railway - STAGING
