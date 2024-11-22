@@ -89,7 +89,7 @@ describe("Files (e2e)", () => {
       const testFilePath = path.join(__dirname, "test-file.txt");
       fs.writeFileSync(testFilePath, "test content");
 
-      return request(app.getHttpServer())
+      request(app.getHttpServer())
         .post("/files")
         .set("Authorization", `${authToken}`)
         .attach("file", testFilePath)
@@ -98,9 +98,10 @@ describe("Files (e2e)", () => {
         .field("file_type", FileType.INVOICE)
         .expect((res) => {
           expect(res.body.message).toBe("test-file.txt");
-          fs.unlinkSync(testFilePath);
         })
         .expect(200);
+
+      return fs.unlinkSync(testFilePath);
     });
 
     it("should fail without authentication", () => {
@@ -140,7 +141,7 @@ describe("Files (e2e)", () => {
         .where(eq(schema.userOrganizations.organization_id, testOrg2[0].id));
       await db.delete(schema.organizations).where(eq(schema.organizations.id, testOrg2[0].id));
 
-      return request(app.getHttpServer())
+      request(app.getHttpServer())
         .post("/files")
         .set("Authorization", `${invalidAuthToken}`)
         .attach("file", testFilePath)
@@ -148,6 +149,8 @@ describe("Files (e2e)", () => {
         .field("file_origin", FileOrigin.DIGITAL)
         .field("file_type", FileType.INVOICE)
         .expect(404);
+
+      return fs.unlinkSync(testFilePath);
     });
   });
 
