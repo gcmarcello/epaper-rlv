@@ -22,7 +22,7 @@ export class FilesService {
     data: {
       name: string;
       user_id: string;
-      organization_id: string;
+      organization_id?: string;
       file_origin: FileOrigin;
       file_type: FileType;
       net_value?: number;
@@ -36,13 +36,25 @@ export class FilesService {
       createFileDto.mimetype
     );
 
+    const doesOrgExist = data.organization_id
+      ? await this.db.query.organizations.findFirst({
+          where: eq(schema.organizations.id, data.organization_id),
+        })
+      : false;
+
+    if (!doesOrgExist)
+      throw new TsRestException(fileContract.createFile, {
+        status: 404,
+        body: { message: "No Organization Found" },
+      });
+
     return (
       await this.db
         .insert(schema.files)
         .values({
           name: data.name,
           user_id: data.user_id,
-          organization_id: data.organization_id,
+          organization_id: data.organization_id!,
           file_origin: data.file_origin,
           file_type: data.file_type,
           file_key,
