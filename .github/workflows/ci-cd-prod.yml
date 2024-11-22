@@ -62,6 +62,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Run Unit Tests
+        run: npm run test:unit
+
       - name: Run Tests
         env:
           DATABASE_URL: "postgresql://testuser:testpassword@localhost:5432/testdb"
