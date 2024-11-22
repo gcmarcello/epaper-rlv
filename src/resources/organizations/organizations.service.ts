@@ -54,7 +54,7 @@ export class OrganizationsService {
     if (!organization)
       throw new TsRestException(organizationContract.findOrg, {
         status: 404,
-        body: { message: "No User Found" },
+        body: { message: "No Org Found" },
       });
 
     return organization;
