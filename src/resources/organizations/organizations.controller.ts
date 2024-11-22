@@ -15,10 +15,6 @@ export class OrganizationsController {
     return tsRestHandler(c.createOrg, async (data) => {
       const org = await this.organizationsService.create(data.body, req.user.id);
 
-      if (!org) {
-        return { status: 400, body: null };
-      }
-
       return { status: 200, body: org };
     });
   }

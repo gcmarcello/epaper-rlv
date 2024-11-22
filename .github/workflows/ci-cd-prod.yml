@@ -13,18 +13,46 @@ jobs:
     name: Run Tests - PROD
     runs-on: ubuntu-latest
     env:
-      MINIO_ACCESS_KEY: admin
-      MINIO_SECRET_KEY: admin1234
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin1234
       MINIO_HOST: localhost
       MINIO_PORT: 9000
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup minio
+      - name: Start MinIO Container
         run: |
-          docker run -d -p 9000:9000 --name minio -e "MINIO_ACCESS_KEY=admin" -e "MINIO_SECRET_KEY=admin1234" -v /tmp/data:/data -v /tmp/config:/root/.minio minio/minio server /data
+          docker run -d \
+            --name minio \
+            -p 9000:9000 -p 9001:9001 \
+            -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
+            -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
+            minio/minio server /data --console-address ":9001"
+
+      - name: Wait for MinIO to Start
+        run: |
+          until curl -f http://localhost:9000/minio/health/live; do
+            echo "Waiting for MinIO to be ready..."
+            sleep 5
+          done
+          echo "MinIO is ready!"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,9 +64,13 @@ jobs:
 
       - name: Run Tests
         env:
-          MINIO_ACCESS_KEY: admin
-          MINIO_SECRET_KEY: admin1234
-        run: npm test
+          DATABASE_URL: "postgresql://testuser:testpassword@localhost:5432/testdb"
+          MINIO_ROOT_USER: admin
+          MINIO_ROOT_PASSWORD: admin1234
+          MINIO_ENDPOINT: http://localhost:9000/
+          JWT_SECRET: "123456"
+          JWT_EXPIRATION: "1h"
+        run: npm run test:staging
 
   deploy:
     name: Deploy to Railway - PROD

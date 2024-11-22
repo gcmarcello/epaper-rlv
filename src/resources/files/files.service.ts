@@ -69,7 +69,7 @@ export class FilesService {
     if (!orgId) {
       throw new TsRestException(fileContract.getFile, {
         status: 404,
-        body: { message: "No Active Org" },
+        body: { message: "No File Found" },
       });
     }
 
@@ -90,7 +90,7 @@ export class FilesService {
     if (!organization_id) {
       throw new TsRestException(fileContract.getFile, {
         status: 404,
-        body: { message: "No Active Org" },
+        body: { message: "No File Found" },
       });
     }
     const {
