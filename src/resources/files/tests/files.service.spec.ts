@@ -7,7 +7,6 @@ import * as schema from "@/common/db/db.schema";
 import { File, FileOrigin, FileType } from "../entities/file.entity";
 import { TsRestException } from "@ts-rest/nest";
 import { fileContract } from "../files.contract";
-import { FindFileDto } from "../dto/find-file.dto";
 
 describe("FilesService", () => {
   let service: FilesService;
@@ -132,22 +131,6 @@ describe("FilesService", () => {
       jest.spyOn(db.query.files, "findFirst").mockResolvedValue(undefined);
 
       await expect(service.findById(1, "org1")).rejects.toThrow(
-        new TsRestException(fileContract.getFile, {
-          status: 404,
-          body: { message: "No File Found" },
-        })
-      );
-    });
-  });
-
-  describe("find", () => {
-    it("should throw an exception if no organization_id is provided", async () => {
-      const query: FindFileDto = {
-        limit: 10,
-        offset: 0,
-      };
-
-      await expect(service.find(query)).rejects.toThrow(
         new TsRestException(fileContract.getFile, {
           status: 404,
           body: { message: "No File Found" },

@@ -1,5 +1,5 @@
 import { initContract } from "@ts-rest/core";
-import { createFileDto } from "./dto/create-file.dto";
+import { createFileDto, updateFileDto } from "./dto/create-file.dto";
 import { z } from "zod";
 import { findFileDto } from "./dto/find-file.dto";
 import { File } from "./entities/file.entity";
@@ -38,6 +38,27 @@ export const fileContract = c.router({
         files: (File & { user: { name: string } | null })[];
         total: number;
       }>(),
+    },
+  },
+  updateFile: {
+    method: "PATCH",
+    path: "/files/:id",
+    body: updateFileDto,
+    pathParams: z.object({
+      id: z.string().transform(Number),
+    }),
+    responses: {
+      200: c.type<{ message: string }>(),
+    },
+  },
+  deleteFile: {
+    method: "DELETE",
+    path: "/files/:id",
+    pathParams: z.object({
+      id: z.string().transform(Number),
+    }),
+    responses: {
+      200: c.type<{ message: string }>(),
     },
   },
 });

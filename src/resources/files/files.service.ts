@@ -22,7 +22,7 @@ export class FilesService {
     data: {
       name: string;
       user_id: string;
-      organization_id?: string;
+      organization_id: string;
       file_origin: FileOrigin;
       file_type: FileType;
       net_value?: number;
@@ -86,13 +86,7 @@ export class FilesService {
     return this.bucket.getFileUrl("epaper", file.file_key);
   }
 
-  async find(query: FindFileDto, organization_id?: string) {
-    if (!organization_id) {
-      throw new TsRestException(fileContract.getFile, {
-        status: 404,
-        body: { message: "No File Found" },
-      });
-    }
+  async find(query: FindFileDto, organization_id: string) {
     const {
       limit = 10,
       offset = 0,
@@ -155,5 +149,84 @@ export class FilesService {
       files: results.map((file) => ({ ...file.files, user: file.users })),
       total,
     };
+  }
+
+  async update(
+    id: number,
+    file: Express.Multer.File,
+    data: {
+      name?: string;
+      organization_id: string;
+      user_id: string;
+      file_origin?: FileOrigin;
+      file_type?: FileType;
+      net_value?: number;
+      gross_value?: number;
+    }
+  ) {
+    const existingFile = await this.db.query.files.findFirst({
+      where: and(eq(schema.files.id, id), eq(schema.files.organization_id, data.organization_id)),
+    });
+
+    if (!existingFile) {
+      throw new TsRestException(fileContract.updateFile, {
+        status: 404,
+        body: { message: "No File Found" },
+      });
+    }
+
+    const organizationOwnerId = await this.db
+      .select({ ownerId: schema.organizations.owner_id })
+      .from(schema.organizations)
+      .where(eq(schema.organizations.id, data.organization_id))
+      .execute();
+
+    if (
+      existingFile.user_id !== existingFile.user_id &&
+      data.user_id !== organizationOwnerId[0].ownerId
+    ) {
+      throw new TsRestException(fileContract.deleteFile, {
+        status: 403,
+        body: { message: "Forbidden" },
+      });
+    }
+
+    if (file) {
+      await this.bucket.deleteFile("epaper", existingFile.file_key);
+      await this.bucket.uploadFile("epaper", file.originalname, file.buffer, file.mimetype);
+    }
+
+    return "Arquivo Atualizado";
+  }
+
+  async delete(id: number, userId: string, orgId: string) {
+    const file = await this.db.query.files.findFirst({
+      where: and(eq(schema.files.id, id), eq(schema.files.organization_id, orgId)),
+    });
+
+    if (!file) {
+      throw new TsRestException(fileContract.deleteFile, {
+        status: 401,
+        body: { message: "No File Found" },
+      });
+    }
+
+    const organizationOwnerId = await this.db
+      .select({ ownerId: schema.organizations.owner_id })
+      .from(schema.organizations)
+      .where(eq(schema.organizations.id, orgId))
+      .execute();
+
+    if (file.user_id !== file.user_id && userId !== organizationOwnerId[0].ownerId) {
+      throw new TsRestException(fileContract.deleteFile, {
+        status: 403,
+        body: { message: "Forbidden" },
+      });
+    }
+
+    await this.db.delete(schema.files).where(eq(schema.files.id, id)).execute();
+    await this.bucket.deleteFile("epaper", file.file_key);
+
+    return "Arquivo Deletado";
   }
 }

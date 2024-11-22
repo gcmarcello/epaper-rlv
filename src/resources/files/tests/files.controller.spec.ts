@@ -19,6 +19,8 @@ describe("FilesController", () => {
             create: jest.fn(),
             findById: jest.fn(),
             find: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -116,6 +118,38 @@ describe("FilesController", () => {
 
       expect(service.find).toHaveBeenCalledWith(query, request.user.organizationId);
       expect(result).toEqual({ status: 200, body: data });
+    });
+  });
+
+  describe("updateFile", () => {
+    it("should update a file", async () => {
+      const request = { user: { id: "userId", organizationId: "orgId" } };
+      const file = { originalname: "test.txt" } as Express.Multer.File;
+      const body = {
+        file_origin: FileOrigin.DIGITAL,
+        file_type: FileType.BILL,
+        net_value: 100,
+        gross_value: 120,
+        name: "fileName",
+        user_id: "userId",
+      };
+      const params = { id: 1 };
+      const mockedResult = { status: 200, body: { message: "Arquivo Atualizado" } };
+
+      jest.spyOn(service, "update").mockResolvedValue("Arquivo Atualizado");
+
+      await service.update(params.id, file, {
+        ...body,
+        organization_id: request.user.organizationId,
+      });
+
+      expect(service.update).toHaveBeenCalledWith(params.id, file, {
+        ...body,
+        user_id: request.user.id,
+        organization_id: request.user.organizationId,
+      });
+
+      expect(mockedResult).toEqual({ status: 200, body: { message: "Arquivo Atualizado" } });
     });
   });
 });

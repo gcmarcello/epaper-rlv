@@ -10,6 +10,7 @@ import { FileOrigin, FileType } from "../entities/file.entity";
 import * as path from "path";
 import * as fs from "fs";
 import { eq } from "drizzle-orm";
+import { BucketService } from "@/common/bucket/bucket.service";
 
 describe("Files (e2e)", () => {
   let app: INestApplication;
@@ -26,6 +27,15 @@ describe("Files (e2e)", () => {
     app = moduleRef.createNestApplication();
     db = moduleRef.get(DrizzleAsyncProvider);
     await app.init();
+
+    const bucketService = app.get(BucketService);
+
+    const bucketExists = await bucketService.bucketExists();
+    if (bucketExists) {
+      await bucketService.emptyBucket();
+      await bucketService.deleteBucket();
+    }
+    await bucketService.createBucket();
 
     // Clear the database
     await db.delete(schema.files);
@@ -235,6 +245,63 @@ describe("Files (e2e)", () => {
 
     it("should fail without authentication", () => {
       return request(app.getHttpServer()).get(`/files/${testFileId}`).expect(401);
+    });
+  });
+
+  describe("PATCH /files/:id", () => {
+    let testFileId: number;
+
+    beforeAll(async () => {
+      const file = await db
+        .insert(schema.files)
+        .values({
+          name: "Test File",
+          user_id: testUser[0].id,
+          organization_id: testOrg[0].id,
+          file_origin: FileOrigin.DIGITAL,
+          file_type: FileType.INVOICE,
+          file_key: "test-key",
+        })
+        .returning();
+      testFileId = file[0].id;
+    });
+
+    it("should update file successfully when authenticated", () => {
+      const testFilePath = path.join(__dirname, "test-update-file.txt");
+      fs.writeFileSync(testFilePath, "updated content");
+
+      return request(app.getHttpServer())
+        .patch(`/files/${testFileId}`)
+        .set("Authorization", `${authToken}`)
+        .attach("file", testFilePath)
+        .field("name", "Updated Test File")
+        .field("file_origin", FileOrigin.DIGITAL)
+        .field("file_type", FileType.RECEIPT)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.message).toBe("Arquivo Atualizado");
+          fs.unlinkSync(testFilePath);
+        });
+    });
+
+    it("should fail when trying to update non-existent file", () => {
+      const testFilePath = path.join(__dirname, "test-update-file.txt");
+      fs.writeFileSync(testFilePath, "updated content");
+
+      return request(app.getHttpServer())
+        .patch(`/files/99999`)
+        .set("Authorization", `${authToken}`)
+        .attach("file", testFilePath)
+        .field("name", "Updated Test File")
+        .expect(404)
+        .expect((res) => {
+          expect(res.body.message).toBe("No File Found");
+          fs.unlinkSync(testFilePath);
+        });
+    });
+
+    it("should fail without authentication", () => {
+      return request(app.getHttpServer()).patch(`/files/${testFileId}`).expect(401);
     });
   });
 });
