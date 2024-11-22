@@ -67,8 +67,7 @@ jobs:
           DATABASE_URL: "postgresql://testuser:testpassword@localhost:5432/testdb"
           MINIO_ACCESS_KEY: admin
           MINIO_SECRET_KEY: admin1234
-          MINIO_HOST: localhost
-          MINIO_PORT: 9000
+          MINIO_ENDPOINT: http://localhost:9000/
         run: npm test
 
   deploy:
