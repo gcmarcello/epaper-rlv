@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   HeadBucketCommand,
   CreateBucketCommand,
+  DeleteBucketCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ConfigService } from "@nestjs/config";
@@ -79,5 +80,9 @@ export class BucketService {
     } catch {
       await this.s3.send(new CreateBucketCommand({ Bucket: bucketName }));
     }
+  }
+
+  async deleteBucket(bucketName: string): Promise<void> {
+    await this.s3.send(new DeleteBucketCommand({ Bucket: bucketName }));
   }
 }
