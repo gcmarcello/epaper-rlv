@@ -68,6 +68,8 @@ jobs:
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: admin1234
           MINIO_ENDPOINT: http://localhost:9000/
+          JWT_SECRET: "123456"
+          JWT_EXPIRATION: "1h"
         run: npm run test:staging
 
   deploy:
