@@ -55,15 +55,3 @@ jobs:
 
       - name: Deploy NestJS
         run: railway up --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }}
-
-      - name: Wait for Railway Service
-        run: |
-          for i in {1..10}; do
-            if railway status --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }} | grep -q "RUNNING"; then
-              echo "Railway service is running"; break;
-            fi;
-            echo "Waiting for Railway service..."; sleep 5;
-          done
-
-      - name: Run Migrations
-        run: railway run --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }} npx drizzle-kit migrate --config=drizzle.config.ts
