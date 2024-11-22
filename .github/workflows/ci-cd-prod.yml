@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Tests - PROD
     runs-on: ubuntu-latest
     env:
       MINIO_ACCESS_KEY: admin
@@ -38,7 +38,7 @@ jobs:
         run: npm test
 
   deploy:
-    name: Deploy to Fly
+    name: Deploy to Fly - PROD
     runs-on: ubuntu-latest
     needs: test
     concurrency: deploy-group
