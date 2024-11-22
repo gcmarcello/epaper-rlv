@@ -47,6 +47,7 @@ jobs:
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_STAGING }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
 
     steps:
       - name: Checkout Code
