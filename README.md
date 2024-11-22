@@ -2,6 +2,36 @@
 
 Este README descreve os passos necessários para configurar e implantar o projeto utilizando o Railway como plataforma de hospedagem.
 
+# Experiência no Desenvolvimento do Projeto EPaper
+
+Durante o desenvolvimento do projeto **EPaper**, enfrentei alguns desafios que me levaram a repensar as ferramentas e soluções inicialmente escolhidas. Gostaria de compartilhar um pouco da minha experiência e as decisões que tomei ao longo do caminho.
+
+## Explorando a Stack
+
+A stack do projeto é composta principalmente por **NestJS** no backend, **Drizzle ORM** para gerenciamento de banco de dados, **PostgreSQL** como banco de dados relacional e **MinIO** para uploads e armazenamento de arquivos.
+
+Já tinha experiência prévia com o **NestJS**, o que me deixou confortável para criar a arquitetura do projeto e implementar funcionalidades de forma estruturada e modular. No entanto, esta foi minha primeira experiência utilizando o **Drizzle ORM**.
+
+O Drizzle talvez tenha sido o mais complicado no quesito implementação. Por ser minha primeira experiência com ele, enfrentei algumas dificuldades, principalmente porque a documentação nem sempre é tão clara quanto eu esperava. Além disso, o fato de haver várias formas diferentes de fazer a mesma coisa me deixou um pouco confuso em alguns momentos. Apesar disso, achei a ferramenta interessante.
+
+## Desafios com o Fly.io
+
+Inicialmente, escolhi o **Fly.io** como plataforma de hospedagem, atraído pela flexibilidade e pela promessa de facilidade na exposição de containers para acesso público. Contudo, encontrei dificuldades na configuração dos serviços. Em especial, o processo de expor containers publicamente exigiu ajustes complexos e não muito intuitivos, o que acabou impactando a produtividade e dificultando a integração.
+
+Após investir tempo tentando superar essas limitações, decidi buscar uma alternativa mais simples e com maior suporte nativo para o meu caso de uso. Foi então que optei por migrar para o **Railway**.
+
+## Mudança para o Railway
+
+O **Railway** provou ser uma escolha mais alinhada com as necessidades do projeto. Ele ofereceu uma interface mais amigável e recursos que facilitaram a configuração de serviços como o **PostgreSQL** e o **MinIO**. Além disso, sua integração com o GitHub permitiu um fluxo de trabalho contínuo para deploys automatizados nos ambientes de staging e produção.
+
+A simplicidade no gerenciamento dos ambientes e a possibilidade de criar serviços interdependentes com poucos ajustes foram os principais diferenciais que me convenceram a continuar com o Railway.
+
+## Limitações do GitHub Actions
+
+Outro desafio enfrentado foi relacionado ao **GitHub Actions**. Embora extremamente útil para a automação do pipeline CI/CD, ele possui uma limitação importante: não é possível executar comandos diretamente dentro de containers configurados como `services`. Isso impactou diretamente o uso do **MinIO**, pois não consegui configurá-lo automaticamente como parte do ambiente de testes.
+
+A solução foi iniciar manualmente um container do MinIO como parte do processo de testes. Apesar de não ser o ideal, essa abordagem funcionou bem e permitiu que o pipeline continuasse operando com os recursos necessários.
+
 # CI/CD Pipeline
 
 O pipeline foi projetado para gerenciar o processo de **testes** e **deploy** do projeto automaticamente, com foco no ambiente de staging. Ele é ativado toda vez que há um pull request ou um push na branch `staging`, ou um push na branch `main`.
@@ -38,7 +68,6 @@ Depois que os testes são aprovados, o pipeline faz o deploy automático para o 
    - No Railway, conecte seu repositório do GitHub ao projeto e vincule as branches aos respectivos ambientes:
      - **main** -> Produção
      - **staging** -> Staging
-   - ⚠️ Nota: É necessário iniciar manualmente o serviço **MinIO** devido a uma limitação nas GitHub Actions.
 
 ## Configuração de Serviços no Railway
 
