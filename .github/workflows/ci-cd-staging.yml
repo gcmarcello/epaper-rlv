@@ -50,14 +50,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy MinIO
+      - name: Checkout Flyctl Actions
         uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy MinIO
         run: flyctl deploy --remote-only --dockerfile .fly/minio/Dockerfile -c .fly/minio/fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deploy NestJS App
-        uses: superfly/flyctl-actions/setup-flyctl@master
+
         run: flyctl deploy --remote-only --dockerfile Dockerfile -c fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
