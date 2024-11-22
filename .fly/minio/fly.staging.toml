@@ -40,6 +40,8 @@ primary_region = "gig"
   protocol = "tcp"
 
   [[services.ports]]
-    port = 9001
-    handlers = ["http"]
+    port = 443
+    handlers = ["tls", "http"]
+
+
 
