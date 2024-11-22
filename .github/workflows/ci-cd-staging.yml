@@ -33,9 +33,7 @@ jobs:
           --health-timeout 5s 
           --health-retries 5
       minio:
-        hostname: minio
         image: "minio/minio:latest"
-        container_name: minio
         ports:
           - "9001:9001"
         volumes:
