@@ -52,8 +52,5 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy MinIO
-        run: railway up --service=${{ vars.RAILWAY_MINIO_SERVICE_ID_STAGING }}
-
       - name: Deploy NestJS
         run: railway up --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }}
