@@ -1,99 +1,95 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Projeto EPaper
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este README descreve os passos necessários para configurar e implantar o projeto utilizando o Railway como plataforma de hospedagem.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# CI/CD Pipeline
 
-## Description
+O pipeline foi projetado para gerenciar o processo de **testes** e **deploy** do projeto automaticamente, com foco no ambiente de staging. Ele é ativado toda vez que há um pull request ou um push na branch `staging`, ou um push na branch `main`.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Como funciona?
 
-## Project setup
+### Etapa 1: Testes
 
-```bash
-$ pnpm install
+Na primeira etapa, o pipeline configura um ambiente de teste completo. Ele utiliza serviços Docker, como um banco de dados PostgreSQL, e inicia um container MinIO para simular o ambiente de produção.
+
+O código da aplicação é baixado do repositório, as dependências são instaladas, e os testes automatizados são executados. Isso garante que o código esteja funcionando corretamente antes de ser implantado.
+
+### Etapa 2: Deploy para o Railway
+
+Depois que os testes são aprovados, o pipeline faz o deploy automático para o ambiente de staging no Railway. Usando a CLI do Railway, ele carrega o código atualizado e configura o serviço do NestJS no ambiente de staging, conectando-o aos recursos, como o banco de dados e o MinIO.
+
+## Pré-requisitos
+
+1. **Conta no Railway**
+
+   - Acesse [Railway](https://railway.app) e crie uma conta caso ainda não tenha.
+
+2. **Ambientes no Railway**
+
+   - Crie dois ambientes: **Produção (Prod)** e **Staging** no Railway.
+
+3. **Tokens de Ambiente**
+
+   - Gere tokens de ambiente no Railway para cada ambiente:
+     - **RAILWAY_TOKEN_PROD**: Token do ambiente de Produção.
+     - **RAILWAY_TOKEN_STAGING**: Token do ambiente de Staging.
+
+4. **Conexão com Repositório e Branch**
+   - No Railway, conecte seu repositório do GitHub ao projeto e vincule as branches aos respectivos ambientes:
+     - **main** -> Produção
+     - **staging** -> Staging
+   - ⚠️ Nota: É necessário iniciar manualmente o serviço **MinIO** devido a uma limitação nas GitHub Actions.
+
+## Configuração de Serviços no Railway
+
+1. **Criar Serviços**
+
+   - Adicione os serviços necessários em cada ambiente:
+     - **MinIO** (para upload de arquivos).
+     - **PostgreSQL** (para banco de dados).
+
+2. **Expor Domínios**
+
+   - No Railway, exponha os domínios dos projetos para acesso público.
+
+3. **Atualizar Comandos de Build**
+   - Configure os comandos de build para ambos os ambientes no Railway:
+     ```bash
+     npm run build:migrate
+     ```
+     Desta forma, as migrations necessárias serão rodadas corretamente ao iniciar o build do NestJS.
+
+## Configuração no GitHub Actions
+
+1. **Adicionar Variáveis de Ambiente**
+
+   - No repositório do GitHub, adicione as seguintes variáveis de ambiente nas GitHub Actions:
+     ```text
+     RAILWAY_MINIO_SERVICE_ID_PROD       - ID do serviço MinIO em Produção
+     RAILWAY_MINIO_SERVICE_ID_STAGING    - ID do serviço MinIO em Staging
+     RAILWAY_SERVICE_ID_PROD             - ID do serviço NestJS em Produção
+     RAILWAY_SERVICE_ID_STAGING          - ID do serviço NestJS em Staging
+     ```
+
+2. **Adicionar Segredos de Ambiente**
+   - No repositório do GitHub, adicione os seguintes segredos de ambiente:
+     ```text
+     DATABASE_URL_PROD   - URL do banco de dados de Produção
+     DATABASE_URL_STAGING - URL do banco de dados de Staging
+     RAILWAY_TOKEN_PROD   - Token do ambiente de Produção
+     RAILWAY_TOKEN_STAGING - Token do ambiente de Staging
+     ```
+
+## Configuração de Variáveis no Railway
+
+Adicione as seguintes variáveis de ambiente nos ambientes **Prod** e **Staging** no Railway:
+
+```text
+DATABASE_URL          - URL do banco de dados
+JWT_EXPIRATION        - Tempo de expiração dos tokens JWT
+JWT_SECRET            - Chave secreta para assinatura JWT
+MINIO_BUCKET_NAME     - Nome do bucket MinIO
+MINIO_PUBLIC_ENDPOINT - Endpoint público do MinIO
+MINIO_ROOT_PASSWORD   - Senha root do MinIO
+MINIO_ROOT_USER       - Usuário root do MinIO
 ```
-
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
