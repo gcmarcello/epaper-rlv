@@ -54,7 +54,7 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Set Fly Secrets
-        run: flyctl secrets set DATABASE_URL=${{ secrets.DATABASE_URL }} MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
+        run: flyctl secrets -a epaper-rlv-nest-staging set DATABASE_URL=${{ secrets.DATABASE_URL }} MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
