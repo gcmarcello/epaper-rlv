@@ -4,13 +4,7 @@
 app = "rlv-minio-staging"
 primary_region = "gig"
 
-[http_service]
-  internal_port = 9000
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ["app"]
+
 
 [[vm]]
   memory = "1gb"
@@ -21,41 +15,5 @@ primary_region = "gig"
   source = "data"
   destination = "/data"
 
-[[services]]
-  # MinIO server port
-  internal_port = 9000
-  protocol = "tcp"
 
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-
-[[services]]
-  # MinIO console routed through HTTPS (port 443)
-  internal_port = 9001
-  protocol = "tcp"
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-    description = "MinIO Console"
-
-[experimental]
-  disable_http2 = true
-
-[[http_service.response_headers]]
-  key = "Cache-Control"
-  value = "no-store"
-
-[[http_service.response_headers]]
-  key = "Content-Security-Policy"
-  value = "default-src 'self' 'unsafe-eval' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';"
-
-[[http_service.response_headers]]
-  key = "Content-Type"
-  value = "text/css"
 
