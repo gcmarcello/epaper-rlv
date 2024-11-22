@@ -52,6 +52,7 @@ jobs:
             echo "Waiting for MinIO to be ready..."
             sleep 5
           done
+          echo "MinIO is ready!"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
