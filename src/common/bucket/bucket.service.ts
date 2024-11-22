@@ -5,8 +5,9 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   HeadBucketCommand,
-  CreateBucketCommand,
   DeleteBucketCommand,
+  CreateBucketCommand,
+  ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ConfigService } from "@nestjs/config";
@@ -15,6 +16,7 @@ import { Readable } from "stream";
 @Injectable()
 export class BucketService {
   private s3: S3;
+  bucketName: string;
 
   constructor(private readonly configService: ConfigService) {
     this.s3 = new S3({
@@ -26,6 +28,7 @@ export class BucketService {
       },
       forcePathStyle: true, // Required for MinIO
     });
+    this.bucketName = this.configService.get<string>("MINIO_BUCKET_NAME") ?? "epaper";
   }
 
   async uploadFile(bucket: string, key: string, file: Buffer, mimeType: string) {
@@ -74,15 +77,31 @@ export class BucketService {
     return signedUrl;
   }
 
-  async createBucketIfNotExists(bucketName: string): Promise<void> {
+  async bucketExists(bucketName?: string): Promise<boolean> {
     try {
-      await this.s3.send(new HeadBucketCommand({ Bucket: bucketName }));
+      await this.s3.send(new HeadBucketCommand({ Bucket: this.bucketName ?? bucketName }));
+      return true;
     } catch {
-      await this.s3.send(new CreateBucketCommand({ Bucket: bucketName }));
+      return false;
     }
   }
 
-  async deleteBucket(bucketName: string): Promise<void> {
-    await this.s3.send(new DeleteBucketCommand({ Bucket: bucketName }));
+  async createBucket(bucketName?: string): Promise<void> {
+    await this.s3.send(new CreateBucketCommand({ Bucket: this.bucketName ?? bucketName }));
+  }
+
+  async deleteBucket(bucketName?: string): Promise<void> {
+    await this.s3.send(new DeleteBucketCommand({ Bucket: this.bucketName ?? bucketName }));
+  }
+
+  async emptyBucket(bucketName?: string): Promise<void> {
+    const bucket = this.bucketName ?? bucketName;
+    const listObjects = await this.s3.send(new ListObjectsV2Command({ Bucket: bucket }));
+
+    if (listObjects.Contents) {
+      for (const object of listObjects.Contents) {
+        await this.s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: object.Key }));
+      }
+    }
   }
 }
