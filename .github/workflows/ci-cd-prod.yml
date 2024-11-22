@@ -44,8 +44,24 @@ jobs:
     concurrency: deploy-group
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --dockerfile Dockerfile -c fly.prod.toml
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Checkout Flyctl Actions
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Set Fly Secrets
+        run: flyctl secrets -a epaper-rlv-nest set DATABASE_URL=${{ secrets.DATABASE_URL }} MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }} MINIO_ENDPOINT=${{ secrets.MINIO_ENDPOINT }} MINIO_PORT=${{ secrets.MINIO_PORT }} MINIO_USE_SSL=${{ secrets.MINIO_USE_SSL }} MINIO_BUCKET=${{ secrets.MINIO_BUCKET }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deploy MinIO
+        run: flyctl deploy --remote-only --dockerfile .fly/minio/Dockerfile -c .fly/minio/fly.staging.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deploy NestJS App
+
+        run: flyctl deploy --remote-only --dockerfile Dockerfile -c fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
