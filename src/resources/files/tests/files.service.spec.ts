@@ -26,6 +26,9 @@ describe("FilesService", () => {
               files: {
                 findFirst: jest.fn(),
               },
+              organizations: {
+                findFirst: jest.fn(),
+              },
             },
             select: jest.fn(),
             $count: jest.fn(),
@@ -69,6 +72,7 @@ describe("FilesService", () => {
 
       const fileKey = "file_key";
       jest.spyOn(bucket, "uploadFile").mockResolvedValue(fileKey);
+      jest.spyOn(db.query.organizations, "findFirst").mockResolvedValue(true as any);
       jest.spyOn(db, "insert").mockReturnValue({
         values: jest.fn().mockReturnValue({
           returning: jest.fn().mockResolvedValue([{ file_key: fileKey }]),
