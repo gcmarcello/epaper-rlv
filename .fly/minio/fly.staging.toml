@@ -1,5 +1,6 @@
 # fly.toml app configuration file for rlv-minio-staging
 
+
 app = "rlv-minio-staging"
 primary_region = "gig"
 
@@ -34,13 +35,14 @@ primary_region = "gig"
     handlers = ["tls", "http"]
 
 [[services]]
-  # MinIO console port
+  # MinIO console routed through HTTPS (port 443)
   internal_port = 9001
   protocol = "tcp"
 
   [[services.ports]]
-    port = 9001
-    handlers = ["http"]
+    port = 443
+    handlers = ["tls", "http"]
+    description = "MinIO Console"
 
 [experimental]
   disable_http2 = true
@@ -56,3 +58,4 @@ primary_region = "gig"
 [[http_service.response_headers]]
   key = "Content-Type"
   value = "text/css"
+
