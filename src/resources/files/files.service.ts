@@ -65,14 +65,7 @@ export class FilesService {
     )[0].file_key;
   }
 
-  async findById(id: number, orgId?: string) {
-    if (!orgId) {
-      throw new TsRestException(fileContract.getFile, {
-        status: 404,
-        body: { message: "No File Found" },
-      });
-    }
-
+  async findById(id: number, orgId: string) {
     const file = await this.db.query.files.findFirst({
       where: and(eq(schema.files.id, id), eq(schema.files.organization_id, orgId)),
     });

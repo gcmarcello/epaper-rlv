@@ -92,15 +92,6 @@ describe("FilesService", () => {
   });
 
   describe("findById", () => {
-    it("should throw an exception if no orgId is provided", async () => {
-      await expect(service.findById(1)).rejects.toThrow(
-        new TsRestException(fileContract.getFile, {
-          status: 404,
-          body: { message: "No File Found" },
-        })
-      );
-    });
-
     it("should return file URL if file is found", async () => {
       const file: File = {
         file_key: "file_key",

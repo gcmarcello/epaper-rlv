@@ -5,13 +5,13 @@ export const createFileDto = z.object({
   name: z.string().min(2).max(64),
   file_origin: z.nativeEnum(FileOrigin),
   file_type: z.nativeEnum(FileType),
-  file: z.any(),
+  file: z.instanceof(File),
   gross_value: z.string().transform(Number).optional(),
   net_value: z.string().transform(Number).optional(),
 });
 
 export const updateFileDto = z.object({
-  file: z.any().optional(),
+  file: z.instanceof(File).optional(),
   name: z.string().min(2).max(64).optional(),
   file_origin: z.nativeEnum(FileOrigin).optional(),
   file_type: z.nativeEnum(FileType).optional(),

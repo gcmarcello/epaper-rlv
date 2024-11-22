@@ -35,7 +35,7 @@ export class FilesController {
       if (!request.user.organizationId || !request.user.id) {
         throw new TsRestException(fileContract.getFile, {
           status: 401,
-          body: { message: "No File Found" },
+          body: { message: "Forbidden" },
         });
       }
       const upload = await this.filesService.create(file, {
@@ -54,7 +54,7 @@ export class FilesController {
       if (!request.user.organizationId) {
         throw new TsRestException(fileContract.deleteFile, {
           status: 401,
-          body: { message: "No File Found" },
+          body: { message: "Forbidden" },
         });
       }
       await this.filesService.delete(params.id, request.user.id, request.user.organizationId);
@@ -67,6 +67,12 @@ export class FilesController {
   @UseInterceptors(FileInterceptor("file"))
   getFile(@Req() request: AuthenticatedRequest) {
     return tsRestHandler(c.getFile, async ({ params }) => {
+      if (!request.user.organizationId) {
+        throw new TsRestException(fileContract.deleteFile, {
+          status: 403,
+          body: { message: "Forbidden" },
+        });
+      }
       const url = await this.filesService.findById(params.id, request.user.organizationId);
       return { status: 200, body: { url } };
     });
@@ -79,7 +85,7 @@ export class FilesController {
       if (!request.user.organizationId) {
         throw new TsRestException(fileContract.deleteFile, {
           status: 401,
-          body: { message: "No File Found" },
+          body: { message: "Forbidden" },
         });
       }
       const data = await this.filesService.find(query, request.user.organizationId);
@@ -104,8 +110,8 @@ export class FilesController {
     return tsRestHandler(c.updateFile, async ({ body, params }) => {
       if (!request.user.organizationId) {
         throw new TsRestException(fileContract.deleteFile, {
-          status: 401,
-          body: { message: "No File Found" },
+          status: 403,
+          body: { message: "Forbidden" },
         });
       }
       await this.filesService.update(params.id, file, {
