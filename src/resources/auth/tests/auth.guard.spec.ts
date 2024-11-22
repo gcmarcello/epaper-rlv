@@ -4,7 +4,6 @@ import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthGuard } from "../auth.guard";
 import { UserPayload } from "@/types/authenticatedRequest";
-import crypto from "crypto";
 
 describe("AuthGuard", () => {
   let authGuard: AuthGuard;
@@ -80,9 +79,9 @@ describe("AuthGuard", () => {
     } as ExecutionContext;
 
     const mockPayload: UserPayload = {
-      id: crypto.randomUUID(),
+      id: "14136e22-139b-4456-aa3f-d7a891d68f76",
       name: "Test User",
-      organizationId: crypto.randomUUID(),
+      organizationId: "12136e22-139b-4456-aa3f-d7a891d68f76",
     };
 
     jest.spyOn(configService, "get").mockReturnValue("test-secret");

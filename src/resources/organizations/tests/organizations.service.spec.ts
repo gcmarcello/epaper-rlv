@@ -6,7 +6,6 @@ import { CreateOrganizationDto } from "../dto/create-organization.dto";
 import { QueryDto } from "@/common/db/db.dto";
 import { TsRestException } from "@ts-rest/nest";
 import * as schema from "@/common/db/db.schema";
-import crypto from "crypto";
 
 describe("OrganizationsService", () => {
   let service: OrganizationsService;
@@ -42,8 +41,12 @@ describe("OrganizationsService", () => {
   describe("create", () => {
     it("should create a new organization", async () => {
       const createOrganizationDto: CreateOrganizationDto = { name: "Test Org" };
-      const owner_id = crypto.randomUUID();
-      const newOrg = { id: crypto.randomUUID(), ...createOrganizationDto, owner_id };
+      const owner_id = "14136e22-139b-4456-aa3f-d7a891d68f76";
+      const newOrg = {
+        id: "12136e22-139b-4456-aa3f-d7a891d68f76",
+        ...createOrganizationDto,
+        owner_id,
+      };
 
       db.transaction = jest.fn().mockImplementation(async (callback) => {
         return callback({

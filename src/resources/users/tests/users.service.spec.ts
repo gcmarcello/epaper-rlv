@@ -4,7 +4,6 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "../../../common/db/db.schema";
 import { hash } from "@/utils/bcrypt";
 import { TsRestException } from "@ts-rest/nest";
-import crypto from "crypto";
 
 jest.mock("@/utils/bcrypt", () => ({
   hash: jest.fn(),
@@ -107,7 +106,7 @@ describe("UsersService", () => {
 
   describe("findbyId", () => {
     it("should return a user by id", async () => {
-      const userId = crypto.randomUUID();
+      const userId = "14136e22-139b-4456-aa3f-d7a891d68f76";
       const user = {
         email: "test@example.com",
         id: userId,
@@ -125,7 +124,7 @@ describe("UsersService", () => {
     it("should throw an error if user not found", async () => {
       (db.query.users.findFirst as jest.Mock).mockResolvedValueOnce(null);
 
-      await expect(service.findbyId(crypto.randomUUID())).rejects.toThrow(
+      await expect(service.findbyId("14136e22-139b-4456-aa3f-d7a891d68f76")).rejects.toThrow(
         new TsRestException(expect.anything(), {
           status: 404,
           body: { message: "No User Found" },
