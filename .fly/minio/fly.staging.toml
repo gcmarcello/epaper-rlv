@@ -3,8 +3,8 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'rlv-minio-staging'
-primary_region = 'gig'
+app = "rlv-minio-staging"
+primary_region = "gig"
 
 [http_service]
   internal_port = 9000
@@ -12,13 +12,34 @@ primary_region = 'gig'
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 0
-  processes = ['app']
+  processes = ["app"]
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
+  memory = "1gb"
+  cpu_kind = "shared"
   cpus = 1
 
 [[mounts]]
   source = "data"
   destination = "/data"
+
+[[services]]
+  internal_port = 9000
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[[services]]
+  internal_port = 9001
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 9001
+    handlers = ["http"]
+
