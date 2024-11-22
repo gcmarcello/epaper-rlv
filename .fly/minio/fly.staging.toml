@@ -5,7 +5,6 @@ app = "rlv-minio-staging"
 primary_region = "gig"
 
 
-
 [[vm]]
   memory = "1gb"
   cpu_kind = "shared"
@@ -19,21 +18,24 @@ primary_region = "gig"
   internal_port = 9000
   protocol = "tcp"
 
-  [[services.ports]]
-    handlers = ["http"]
-    port = 80
-    force_https = true
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
 
   [[services.ports]]
-    handlers = ["tls", "http"]
     port = 443
-
-[[services]]
-  internal_port = 9001
-  protocol = "tcp"
+    handlers = ["tls"]
 
   [[services.ports]]
+    port = 80
     handlers = ["http"]
-    port = 9001
-    force_https = true
 
+  [[services.http_checks]]
+    interval = 10000
+    timeout = 2000
+    grace_period = "5s"
+    path = "/minio/health/ready"
+    protocol = "http"
+    method = "GET"
+    headers = {}
