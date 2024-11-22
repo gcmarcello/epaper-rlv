@@ -22,14 +22,31 @@ export class FilesService {
     data: {
       name: string;
       user_id: string;
-      organization_id: string;
+      organization_id?: string;
       file_origin: FileOrigin;
       file_type: FileType;
       net_value?: number;
       gross_value?: number;
     }
   ) {
-    const file_key = await this.bucket.uploadFile(createFileDto);
+    const file_key = await this.bucket.uploadFile(
+      "epaper",
+      createFileDto.originalname,
+      createFileDto.buffer,
+      createFileDto.mimetype
+    );
+
+    const doesOrgExist = data.organization_id
+      ? await this.db.query.organizations.findFirst({
+          where: eq(schema.organizations.id, data.organization_id),
+        })
+      : false;
+
+    if (!doesOrgExist)
+      throw new TsRestException(fileContract.createFile, {
+        status: 404,
+        body: { message: "No Organization Found" },
+      });
 
     return (
       await this.db
@@ -37,7 +54,7 @@ export class FilesService {
         .values({
           name: data.name,
           user_id: data.user_id,
-          organization_id: data.organization_id,
+          organization_id: data.organization_id!,
           file_origin: data.file_origin,
           file_type: data.file_type,
           file_key,
@@ -66,7 +83,7 @@ export class FilesService {
         body: { message: "No File Found" },
       });
 
-    return this.bucket.getFileUrl(file.file_key);
+    return this.bucket.getFileUrl("epaper", file.file_key);
   }
 
   async find(query: FindFileDto, organization_id?: string) {

@@ -32,7 +32,11 @@ export class FilesController {
     file: Express.Multer.File
   ) {
     return tsRestHandler(c.createFile, async ({ body }) => {
-      const upload = await this.filesService.create(file, { ...body, user_id: request.user.id });
+      const upload = await this.filesService.create(file, {
+        ...body,
+        user_id: request.user.id,
+        organization_id: request.user.organizationId,
+      });
       return { status: 200, body: { message: upload } };
     });
   }
