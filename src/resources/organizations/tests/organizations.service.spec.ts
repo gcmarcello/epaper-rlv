@@ -6,6 +6,7 @@ import { CreateOrganizationDto } from "../dto/create-organization.dto";
 import { QueryDto } from "@/common/db/db.dto";
 import { TsRestException } from "@ts-rest/nest";
 import * as schema from "@/common/db/db.schema";
+import crypto from "crypto";
 
 describe("OrganizationsService", () => {
   let service: OrganizationsService;

@@ -4,6 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthGuard } from "../auth.guard";
 import { UserPayload } from "@/types/authenticatedRequest";
+import crypto from "crypto";
 
 describe("AuthGuard", () => {
   let authGuard: AuthGuard;

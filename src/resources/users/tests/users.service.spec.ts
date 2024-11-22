@@ -4,6 +4,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "../../../common/db/db.schema";
 import { hash } from "@/utils/bcrypt";
 import { TsRestException } from "@ts-rest/nest";
+import crypto from "crypto";
 
 jest.mock("@/utils/bcrypt", () => ({
   hash: jest.fn(),

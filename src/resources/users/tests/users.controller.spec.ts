@@ -8,6 +8,7 @@ import { AuthGuard } from "../../auth/auth.guard";
 import { User } from "../entities/user.entity";
 import { TsRestException } from "@ts-rest/nest";
 import { userContract } from "../users.contract";
+import crypto from "crypto";
 
 describe("UsersController", () => {
   let controller: UsersController;
