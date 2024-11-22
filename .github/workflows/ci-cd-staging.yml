@@ -53,6 +53,11 @@ jobs:
       - name: Checkout Flyctl Actions
         uses: superfly/flyctl-actions/setup-flyctl@master
 
+      - name: Set Fly Secrets
+        run: flyctl secrets set DATABASE_URL=${{ secrets.DATABASE_URL }} MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
       - name: Deploy MinIO
         run: flyctl deploy --remote-only --dockerfile .fly/minio/Dockerfile -c .fly/minio/fly.staging.toml
         env:
