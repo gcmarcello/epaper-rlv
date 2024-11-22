@@ -54,3 +54,6 @@ jobs:
 
       - name: Deploy NestJS
         run: railway up --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }}
+
+      - name: Run Migrations
+        run: railway run --service=${{ vars.RAILWAY_SERVICE_ID_STAGING }} npx drizzle-kit migrate --config=drizzle.config.ts
