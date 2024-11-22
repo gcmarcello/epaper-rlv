@@ -40,7 +40,7 @@ describe("UsersController", () => {
   describe("create", () => {
     it("should create a user and return status 200", async () => {
       const body = { name: "John Doe", email: "email@email.com", password: "password" };
-      const id = crypto.randomUUID();
+      const id = "14136e22-139b-4456-aa3f-d7a891d68f76";
 
       jest.spyOn(usersService, "create").mockResolvedValue({
         user: { id, name: body.name },
@@ -75,7 +75,7 @@ describe("UsersController", () => {
       const query = { limit: 10, offset: 0 };
       const users: User[] = [
         {
-          id: crypto.randomUUID(),
+          id: "14136e22-139b-4456-aa3f-d7a891d68f76",
           name: "John Doe",
           created_at: new Date(),
           updated_at: new Date(),
@@ -94,7 +94,7 @@ describe("UsersController", () => {
 
   describe("findbyId", () => {
     it("should return a user by id with status 200", async () => {
-      const id = crypto.randomUUID();
+      const id = "14136e22-139b-4456-aa3f-d7a891d68f76";
       const params = { id };
       const user = {
         id,
