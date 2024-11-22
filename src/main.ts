@@ -22,13 +22,13 @@ async function bootstrap() {
 
   const apiDoc = generateOpenApi(
     {
-      auth: authContract,
-      users: userContract,
-      organizations: organizationContract,
+      Auth: authContract,
+      Users: userContract,
+      Organizations: organizationContract,
       Files: fileContract,
     },
     {
-      info: { title: "Blog API", version: "0.1" },
+      info: { title: "EPaper API", version: "1.0", description: "API para o teste técnico RLV" },
       components: {
         securitySchemes: {
           BearerAuth: {
