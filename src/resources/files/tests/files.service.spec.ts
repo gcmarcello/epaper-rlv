@@ -97,7 +97,7 @@ describe("FilesService", () => {
       await expect(service.findById(1)).rejects.toThrow(
         new TsRestException(fileContract.getFile, {
           status: 404,
-          body: { message: "No Active Org" },
+          body: { message: "No File Found" },
         })
       );
     });
@@ -150,97 +150,9 @@ describe("FilesService", () => {
       await expect(service.find(query)).rejects.toThrow(
         new TsRestException(fileContract.getFile, {
           status: 404,
-          body: { message: "No Active Org" },
+          body: { message: "No File Found" },
         })
       );
-    });
-
-    it("should return files and count", async () => {
-      const query: FindFileDto = { limit: 10, offset: 0 };
-      const organization_id = "org1";
-      const dbData: { files: File[]; users: { name: string } | null }[] = [
-        {
-          files: [
-            {
-              id: 1,
-              created_at: new Date(),
-              updated_at: new Date(),
-              name: "test.txt",
-              user_id: "userId",
-              organization_id: "orgId",
-              file_origin: FileOrigin.DIGITAL,
-              file_type: FileType.BILL,
-              file_key: "fileKey",
-              net_value: 100,
-              gross_value: 120,
-            },
-          ],
-          users: { name: "userName" },
-        },
-        {
-          files: [
-            {
-              id: 2,
-              created_at: new Date(),
-              updated_at: new Date(),
-              name: "test.pdf",
-              user_id: "userId",
-              organization_id: "orgId",
-              file_origin: FileOrigin.DIGITIZED,
-              file_type: FileType.SICK_NOTE,
-              file_key: "fileKey",
-              net_value: 100,
-              gross_value: 120,
-            },
-          ],
-          users: { name: "userName" },
-        },
-      ];
-      const data: { files: (File & { user: { name: string } | null })[]; total: number } = {
-        files: [
-          {
-            id: 1,
-            created_at: new Date(),
-            updated_at: new Date(),
-            name: "test.txt",
-            user_id: "userId",
-            organization_id: "orgId",
-            file_origin: FileOrigin.DIGITAL,
-            file_type: FileType.BILL,
-            file_key: "fileKey",
-            net_value: 100,
-            gross_value: 120,
-            user: { name: "userName" },
-          },
-          {
-            id: 2,
-            created_at: new Date(),
-            updated_at: new Date(),
-            name: "test.pdf",
-            user_id: "userId",
-            organization_id: "orgId",
-            file_origin: FileOrigin.DIGITIZED,
-            file_type: FileType.SICK_NOTE,
-            file_key: "fileKey",
-            net_value: 100,
-            gross_value: 120,
-            user: { name: "userName" },
-          },
-        ],
-        total: 2,
-      };
-
-      jest.spyOn(db, "select").mockReturnValue({
-        from: jest.fn().mockReturnValue({
-          leftJoin: jest.fn().mockReturnValue({
-            where: jest.fn().mockReturnValue({
-              limit: jest.fn().mockReturnValue({
-                offset: jest.fn().mockReturnValue(dbData),
-              }),
-            }),
-          }),
-        }),
-      } as any);
     });
   });
 });
