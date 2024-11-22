@@ -40,8 +40,9 @@ jobs:
           MINIO_SECRET_KEY: admin1234
         ports:
           - 9000:9000
-        command: server /data
         options: >-
+          --entrypoint minio
+          server /data
           --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
           --health-interval 10s
           --health-timeout 5s
