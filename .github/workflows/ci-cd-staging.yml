@@ -18,13 +18,38 @@ jobs:
       MINIO_HOST: localhost
       MINIO_PORT: 9000
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+      minio:
+        image: minio/minio
+        env:
+          MINIO_ACCESS_KEY: admin
+          MINIO_SECRET_KEY: admin1234
+        ports:
+          - 9000:9000
+        options: >
+          --entrypoint "minio server /data"
+          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Setup minio
-        run: |
-          docker run -d -p 9000:9000 --name minio -e "MINIO_ACCESS_KEY=admin" -e "MINIO_SECRET_KEY=admin1234" -v /tmp/data:/data -v /tmp/config:/root/.minio minio/minio server /data
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,8 +61,11 @@ jobs:
 
       - name: Run Tests
         env:
+          DATABASE_URL: "postgresql://testuser:testpassword@localhost:5432/testdb"
           MINIO_ACCESS_KEY: admin
           MINIO_SECRET_KEY: admin1234
+          MINIO_HOST: localhost
+          MINIO_PORT: 9000
         run: npm test
 
   deploy:
