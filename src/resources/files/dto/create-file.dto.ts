@@ -8,7 +8,6 @@ export const createFileDto = z.object({
   file: z.any(),
   gross_value: z.string().transform(Number).optional(),
   net_value: z.string().transform(Number).optional(),
-  organization_id: z.string().uuid(),
 });
 
 export type CreateFileDto = z.infer<typeof createFileDto>;
