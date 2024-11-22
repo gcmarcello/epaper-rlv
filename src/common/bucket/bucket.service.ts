@@ -18,7 +18,7 @@ export class BucketService {
 
   constructor(private readonly configService: ConfigService) {
     this.s3 = new S3({
-      endpoint: this.configService.get<string>("MINIO_ENDPOINT"),
+      endpoint: this.configService.get<string>("MINIO_PUBLIC_ENDPOINT"),
       region: "us-east-1",
       credentials: {
         accessKeyId: this.configService.get("MINIO_ROOT_USER") ?? "admin",

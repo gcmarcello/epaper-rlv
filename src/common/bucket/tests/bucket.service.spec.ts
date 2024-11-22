@@ -19,7 +19,8 @@ describe("BucketService (Integration)", () => {
           useValue: {
             get: jest.fn((key: string) => {
               const env = {
-                MINIO_ENDPOINT: process.env.MINIO_ENDPOINT ?? "http://host.docker.internal:9000",
+                MINIO_PUBLIC_ENDPOINT:
+                  process.env.MINIO_PUBLIC_ENDPOINT ?? "http://host.docker.internal:9000",
                 MINIO_ROOT_USER: "admin",
                 MINIO_ROOT_PASSWORD: "admin1234",
               };
