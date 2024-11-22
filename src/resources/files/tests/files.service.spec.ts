@@ -52,7 +52,11 @@ describe("FilesService", () => {
 
   describe("create", () => {
     it("should create a file and return its key", async () => {
-      const createFileDto = {} as Express.Multer.File;
+      const createFileDto = {
+        originalname: "test",
+        buffer: Buffer.from("test"),
+        mimetype: "text/plain",
+      } as Express.Multer.File;
       const data = {
         name: "test",
         user_id: "user1",
@@ -74,7 +78,12 @@ describe("FilesService", () => {
       const result = await service.create(createFileDto, data);
 
       expect(result).toBe(fileKey);
-      expect(bucket.uploadFile).toHaveBeenCalledWith(createFileDto);
+      expect(bucket.uploadFile).toHaveBeenCalledWith(
+        "epaper",
+        createFileDto.originalname,
+        createFileDto.buffer,
+        createFileDto.mimetype
+      );
       expect(db.insert).toHaveBeenCalledWith(schema.files);
     });
   });
@@ -112,7 +121,7 @@ describe("FilesService", () => {
       expect(db.query.files.findFirst).toHaveBeenCalledWith({
         where: expect.any(Object),
       });
-      expect(bucket.getFileUrl).toHaveBeenCalledWith(file.file_key);
+      expect(bucket.getFileUrl).toHaveBeenCalledWith("epaper", file.file_key);
     });
 
     it("should throw an exception if file is not found", async () => {

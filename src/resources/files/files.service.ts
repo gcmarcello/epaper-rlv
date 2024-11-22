@@ -29,7 +29,12 @@ export class FilesService {
       gross_value?: number;
     }
   ) {
-    const file_key = await this.bucket.uploadFile(createFileDto);
+    const file_key = await this.bucket.uploadFile(
+      "epaper",
+      createFileDto.originalname,
+      createFileDto.buffer,
+      createFileDto.mimetype
+    );
 
     return (
       await this.db
@@ -66,7 +71,7 @@ export class FilesService {
         body: { message: "No File Found" },
       });
 
-    return this.bucket.getFileUrl(file.file_key);
+    return this.bucket.getFileUrl("epaper", file.file_key);
   }
 
   async find(query: FindFileDto, organization_id?: string) {
