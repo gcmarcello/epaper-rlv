@@ -32,17 +32,19 @@ jobs:
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
-      minio:
-        image: "minio/minio:latest"
-        ports:
-          - "9001:9001"
-        volumes:
-          - minio-data:/data
-        command: server /data --console-address ":9001"
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Start MinIO Container
+        run: |
+          docker run -d \
+            --name minio \
+            -p 9000:9000 -p 9001:9001 \
+            -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
+            -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
+            minio/minio server /data --console-address ":9001"
 
       - name: Wait for MinIO to Start
         run: |
