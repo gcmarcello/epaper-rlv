@@ -4,7 +4,7 @@ Este README descreve os passos necessários para configurar e implantar o projet
 
 ##### Pagina OpenAPI - Prod
 
-https://epaper-rlv-prod-production.up.railway.app
+https://epaper-rlv-prod-production.up.railway.app/api-docs
 
 ###### Pagina OpenAPI - Staging
 
