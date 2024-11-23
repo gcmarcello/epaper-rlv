@@ -56,7 +56,17 @@ O código da aplicação é baixado do repositório, as dependências são insta
 
 Depois que os testes são aprovados, o pipeline faz o deploy automático para o ambiente de staging no Railway. Usando a CLI do Railway, ele carrega o código atualizado e configura o serviço do NestJS no ambiente de staging, conectando-o aos recursos, como o banco de dados e o MinIO.
 
-## Pré-requisitos
+## Instruções para Dev Local
+
+Simplesmente rode os comandos para criar o `schema`, instalar as dependências e iniciar o NestJS.
+
+```code
+pnpm drizzle-kit push
+pnpm i
+pnpm start:dev
+```
+
+## Instruções para Deploy
 
 1. **Conta no Railway**
 
