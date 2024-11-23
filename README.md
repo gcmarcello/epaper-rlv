@@ -2,14 +2,6 @@
 
 Este README descreve os passos necessários para configurar e implantar o projeto utilizando o Railway como plataforma de hospedagem.
 
-##### Pagina OpenAPI - Prod
-
-https://epaper-rlv-prod-production.up.railway.app/api-docs
-
-###### Pagina OpenAPI - Staging
-
-https://epaper-rlv-staging.up.railway.app/api-docs
-
 # Experiência no Desenvolvimento do Projeto EPaper
 
 Durante o desenvolvimento do projeto **EPaper**, enfrentei alguns desafios que me levaram a repensar as ferramentas e soluções inicialmente escolhidas. Gostaria de compartilhar um pouco da minha experiência e as decisões que tomei ao longo do caminho.
@@ -65,17 +57,23 @@ Depois que os testes são aprovados, o pipeline faz o deploy automático para o 
 2. **Ambientes no Railway**
 
    - Crie dois ambientes: **Produção (Prod)** e **Staging** no Railway.
-
+     ![image](https://i.imgur.com/DOKamxZ.png)
+     
 3. **Tokens de Ambiente**
 
    - Gere tokens de ambiente no Railway para cada ambiente:
      - **RAILWAY_TOKEN_PROD**: Token do ambiente de Produção.
      - **RAILWAY_TOKEN_STAGING**: Token do ambiente de Staging.
+       
+       ![image](https://i.imgur.com/jAbyTpk.png)
 
 4. **Conexão com Repositório e Branch**
    - No Railway, conecte seu repositório do GitHub ao projeto e vincule as branches aos respectivos ambientes:
      - **main** -> Produção
      - **staging** -> Staging
+     - 
+      ![image](https://i.imgur.com/Ny1XRZV.png)
+      ![image](https://i.imgur.com/4IFNjCs.png)
 
 ## Configuração de Serviços no Railway
 
@@ -84,10 +82,14 @@ Depois que os testes são aprovados, o pipeline faz o deploy automático para o 
    - Adicione os serviços necessários em cada ambiente:
      - **MinIO** (para upload de arquivos).
      - **PostgreSQL** (para banco de dados).
+       
+      ![image](https://s3.ezgif.com/tmp/ezgif-3-5d00c4e32b.gif)
 
 2. **Expor Domínios**
 
    - No Railway, exponha os domínios dos projetos para acesso público.
+  
+     ![image](https://i.imgur.com/ckRRcKw.png)
 
 3. **Atualizar Comandos de Build**
    - Configure os comandos de build para ambos os ambientes no Railway:
@@ -95,6 +97,8 @@ Depois que os testes são aprovados, o pipeline faz o deploy automático para o 
      npm run build:migrate
      ```
      Desta forma, as migrations necessárias serão rodadas corretamente ao iniciar o build do NestJS.
+
+     ![image](https://i.imgur.com/ckRRcKw.png)
 
 ## Configuração no GitHub Actions
 
@@ -130,3 +134,5 @@ MINIO_PUBLIC_ENDPOINT - Endpoint público do MinIO
 MINIO_ROOT_PASSWORD   - Senha root do MinIO
 MINIO_ROOT_USER       - Usuário root do MinIO
 ```
+
+![image](https://i.imgur.com/zhGVi9K.png)
