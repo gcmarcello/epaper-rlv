@@ -5,7 +5,7 @@ import { BucketService } from "../bucket.service";
 describe("BucketService (Integration)", () => {
   let bucketService: BucketService;
 
-  const testBucketName = "test-bucket";
+  const testBucketName = "epaper";
   const testFileKey = "test-file.txt";
   const testFileContent = Buffer.from("Hello, MinIO!");
   const testFileMimeType = "text/plain";
@@ -19,7 +19,8 @@ describe("BucketService (Integration)", () => {
           useValue: {
             get: jest.fn((key: string) => {
               const env = {
-                MINIO_ENDPOINT: process.env.MINIO_ENDPOINT ?? "http://host.docker.internal:9000",
+                MINIO_PUBLIC_ENDPOINT:
+                  process.env.MINIO_PUBLIC_ENDPOINT ?? "http://host.docker.internal:9000",
                 MINIO_ROOT_USER: "admin",
                 MINIO_ROOT_PASSWORD: "admin1234",
               };
@@ -32,12 +33,17 @@ describe("BucketService (Integration)", () => {
 
     bucketService = module.get<BucketService>(BucketService);
 
-    await bucketService.createBucketIfNotExists(testBucketName);
+    const bucketExists = await bucketService.bucketExists();
+    if (bucketExists) {
+      await bucketService.emptyBucket();
+      await bucketService.deleteBucket();
+    }
+    await bucketService.createBucket();
   });
 
   afterAll(async () => {
-    await bucketService.deleteFile(testBucketName, testFileKey);
-    await bucketService.deleteBucket(testBucketName);
+    await bucketService.emptyBucket();
+    await bucketService.deleteBucket();
   });
 
   it("should upload a file to the bucket", async () => {

@@ -5,8 +5,11 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
-    "build:prod": "drizzle-kit migrate --config=drizzle.config.ts && nest build",
+    "build:migrate": "drizzle-kit migrate --config=drizzle.config.ts && nest build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -14,12 +17,13 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --detectOpenHandles --forceExit",
-    "test:staging": "drizzle-kit migrate --config=drizzle.config.ts && jest --detectOpenHandles --forceExit --runInBand",
-    "test:watch": "jest --watch --detectOpenHandles --forceExit --runInBand",
-    "test:cov": "jest --coverage --detectOpenHandles --forceExit --runInBand",
+    "test": "jest --detectOpenHandles",
+    "test:unit": "jest --detectOpenHandles",
+    "test:migrate": "drizzle-kit migrate --config=drizzle.config.ts && jest --config ./test/jest-e2e.json --detectOpenHandles --runInBand",
+    "test:watch": "jest --watch --detectOpenHandles --runInBand",
+    "test:cov": "jest --coverage --detectOpenHandles --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --runInBand"
   },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.6",

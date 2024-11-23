@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline - STAGING
 
 on:
   pull_request:
@@ -62,15 +62,18 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+      - name: Run Integration Tests
         env:
           DATABASE_URL: "postgresql://testuser:testpassword@localhost:5432/testdb"
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: admin1234
-          MINIO_ENDPOINT: http://localhost:9000/
+          MINIO_PUBLIC_ENDPOINT: http://localhost:9000/
           JWT_SECRET: "123456"
           JWT_EXPIRATION: "1h"
-        run: npm run test:staging
+        run: npm run test:migrate
 
   deploy:
     name: Deploy to Railway - STAGING
