@@ -2,6 +2,14 @@
 
 Este README descreve os passos necessários para configurar e implantar o projeto utilizando o Railway como plataforma de hospedagem.
 
+##### Pagina OpenAPI - Prod
+
+https://epaper-rlv-prod-production.up.railway.app
+
+###### Pagina OpenAPI - Staging
+
+https://epaper-rlv-staging.up.railway.app/api-docs
+
 # Experiência no Desenvolvimento do Projeto EPaper
 
 Durante o desenvolvimento do projeto **EPaper**, enfrentei alguns desafios que me levaram a repensar as ferramentas e soluções inicialmente escolhidas. Gostaria de compartilhar um pouco da minha experiência e as decisões que tomei ao longo do caminho.
