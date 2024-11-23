@@ -1,9 +1,6 @@
 name: CI/CD Pipeline - PROD
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
